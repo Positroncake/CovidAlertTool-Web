@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using System.Net
+@inject HttpClient HttpClient
 
 <PageTitle>Index</PageTitle>
 
@@ -6,4 +8,36 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<button @onclick="NewAccount">New Account</button>
+
+<input @bind="_words[0]"/>
+<input @bind="_words[1]"/>
+<input @bind="_words[2]"/>
+<input @bind="_words[3]"/>
+<input @bind="_words[4]"/>
+<input @bind="_words[5]"/>
+<input @bind="_words[6]"/>
+<input @bind="_words[7]"/>
+<input @bind="_words[8]"/>
+<input @bind="_words[9]"/>
+<input @bind="_words[10]"/>
+<input @bind="_words[11]"/>
+
+<button @onclick="DeleteAccount">Delete Account</button>
+
+@code {
+    
+    private String[] _words = new String[12];
+
+    private async void NewAccount()
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
+        if (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
+    }
+
+    private async void DeleteAccount()
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/Delete", _words);
+    }
+
+}

@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CovidAlertTool.Client", "Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CovidAlertTool.Shared", "Shared\CovidAlertTool.Shared.csproj", "{AB8E8ED1-2347-4071-A667-539F8DF5F605}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseAccess", "DatabaseAccess\DatabaseAccess.csproj", "{9F206B1C-B05C-4A17-9BCA-934D00F62610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,18 @@ Global
 		{AB8E8ED1-2347-4071-A667-539F8DF5F605}.Release|x64.Build.0 = Release|Any CPU
 		{AB8E8ED1-2347-4071-A667-539F8DF5F605}.Release|x86.ActiveCfg = Release|Any CPU
 		{AB8E8ED1-2347-4071-A667-539F8DF5F605}.Release|x86.Build.0 = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|x64.Build.0 = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Debug|x86.Build.0 = Debug|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|x64.ActiveCfg = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|x64.Build.0 = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|x86.ActiveCfg = Release|Any CPU
+		{9F206B1C-B05C-4A17-9BCA-934D00F62610}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

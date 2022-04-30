@@ -1,0 +1,12 @@
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/bin/Debug/net7.0/DatabaseAccess.deps.json
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/bin/Debug/net7.0/DatabaseAccess.dll
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/bin/Debug/net7.0/DatabaseAccess.pdb
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.csproj.AssemblyReference.cache
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.GeneratedMSBuildEditorConfig.editorconfig
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.AssemblyInfoInputs.cache
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.AssemblyInfo.cs
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.csproj.CoreCompileInputs.cache
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.dll
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/refint/DatabaseAccess.dll
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/DatabaseAccess.pdb
+/home/roncake/RiderProjects/CovidAlertTool-Web/DatabaseAccess/obj/Debug/net7.0/ref/DatabaseAccess.dll

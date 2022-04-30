@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\CovidAlertTool.Client.csproj" />
+    <ProjectReference Include="..\DatabaseAccess\DatabaseAccess.csproj" />
     <ProjectReference Include="..\Shared\CovidAlertTool.Shared.csproj" />
   </ItemGroup>
 
