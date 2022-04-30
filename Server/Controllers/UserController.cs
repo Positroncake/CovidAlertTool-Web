@@ -29,8 +29,8 @@ public class UserController : ControllerBase
         // Hash password and create new user
         String hash = Utils.HashWords(words);
         var query = @$"CREATE TABLE {hash} (
-    Lat VARCHAR(8),
-    Lon VARCHAR(8),
+    Lat TEXT,
+    Lon TEXT,
     T DATETIME
 )";
         await access.Execute(query, new
@@ -44,9 +44,9 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("Delete")]
-    public async Task<ActionResult> Delete(String[] words)
+    public async Task<ActionResult> Delete(String[] key)
     {
-        String hash = Utils.HashWords(words);
+        String hash = Utils.HashWords(key);
         IAccess access = new Access();
         var sql = $"DROP TABLE {hash}";
         await access.Execute(sql, new { }, Utils.UsersDatabaseConnectionString);
