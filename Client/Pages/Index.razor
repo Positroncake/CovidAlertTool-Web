@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using System.Net
+@using CovidAlertTool.Shared
 @inject HttpClient HttpClient
 
 <PageTitle>Index</PageTitle>
@@ -12,48 +13,65 @@ Welcome to your new app.
 
 <br/>
 
-@foreach (String word in _key)
-{
-    <p>@word</p>
-}
-
-<input @bind="_words[0]"/>
-<input @bind="_words[1]"/>
-<input @bind="_words[2]"/>
-<input @bind="_words[3]"/>
-<input @bind="_words[4]"/>
-<input @bind="_words[5]"/>
-<input @bind="_words[6]"/>
-<input @bind="_words[7]"/>
-<input @bind="_words[8]"/>
-<input @bind="_words[9]"/>
-<input @bind="_words[10]"/>
-<input @bind="_words[11]"/>
+<input @bind="_input[0]"/>
+<input @bind="_input[1]"/>
+<input @bind="_input[2]"/>
+<input @bind="_input[3]"/>
+<input @bind="_input[4]"/>
+<input @bind="_input[5]"/>
+<input @bind="_input[6]"/>
+<input @bind="_input[7]"/>
+<input @bind="_input[8]"/>
+<input @bind="_input[9]"/>
+<input @bind="_input[10]"/>
+<input @bind="_input[11]"/>
 
 <button @onclick="SendLoc">Send location</button>
 <button @onclick="DeleteAccount">Delete Account</button>
 
+<p>Latitude - Degrees Minutes Seconds</p>
+<input @bind="_latitude[0]"/>
+<input @bind="_latitude[1]"/>
+<input @bind="_latitude[2]"/>
+<p>Longitude - Degrees Minutes Seconds</p>
+<input @bind="_longitude[0]"/>
+<input @bind="_longitude[1]"/>
+<input @bind="_longitude[2]"/>
+
+<button @onclick="GetAllLoc">Get all locations</button>
+
 @code {
     
-    private String[] _words = new String[12];
-    private String[] _key = new String[12];
+    private String[] _input = new String[12];
+    private String[] _latitude = new String[3];
+    private String[] _longitude = new String[3];
 
     private async void NewAccount()
     {
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
         while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
-        String[] words = (await response.Content.ReadFromJsonAsync<String[]>())!;
-        for (var i = 0; i < 12; ++i) _key[i] = words[i];
     }
 
     private async void DeleteAccount()
     {
-        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/Delete", _words);
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/Delete", _input);
     }
     
     private async void SendLoc()
     {
-        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/New", _words);
+        var location = new NewLocation
+        {
+            Lat = $"{_latitude[0]}-{_latitude[1]}-{_latitude[2]}",
+            Lon = $"{_longitude[0]}-{_longitude[1]}-{_longitude[2]}",
+            T = DateTime.UtcNow,
+            Key = _input
+        };
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+    }
+
+    private async void GetAllLoc()
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
     }
 
 }

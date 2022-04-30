@@ -2,28 +2,76 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>CovidAlertTool</title>
-    <base href="/" />
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
-    <link href="CovidAlertTool.Client.styles.css" rel="stylesheet" />
-    <link href="manifest.json" rel="manifest" />
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <base href="/"/>
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/app.css" rel="stylesheet"/>
+    <link href="CovidAlertTool.Client.styles.css" rel="stylesheet"/>
+    <link href="manifest.json" rel="manifest"/>
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"/>
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"/>
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    <script>
+        function drawMap() {
+            map = new OpenLayers.Map("mapdiv");
+            map.addLayer(new OpenLayers.Layer.OSM());
+
+            var lonLat = new OpenLayers.LonLat(-79.38722, 48.6425)
+                .transform(
+                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                    map.getProjectionObject() // to Spherical Mercator Projection
+                );
+
+            var zoom = 16;
+
+            var markers = new OpenLayers.Layer.Markers("Markers");
+            map.addLayer(markers);
+
+            markers.addMarker(new OpenLayers.Marker(lonLat));
+
+            var lonLat = new OpenLayers.LonLat(-62.2114, 82.52583)
+                .transform(
+                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                    map.getProjectionObject() // to Spherical Mercator Projection
+                );
+
+            var zoom = 16;
+
+            var markers = new OpenLayers.Layer.Markers("Markers");
+            map.addLayer(markers);
+
+            markers.addMarker(new OpenLayers.Marker(lonLat));
+
+            var lonLat = new OpenLayers.LonLat(-123.18167, 49.19639)
+                .transform(
+                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                    map.getProjectionObject() // to Spherical Mercator Projection
+                );
+
+            var zoom = 16;
+
+            var markers = new OpenLayers.Layer.Markers("Markers");
+            map.addLayer(markers);
+
+            markers.addMarker(new OpenLayers.Marker(lonLat));
+
+            map.setCenter(lonLat, zoom);
+        }
+    </script>
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+<div id="app">Loading...</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+<script src="_framework/blazor.webassembly.js"></script>
+<script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
 
 </html>

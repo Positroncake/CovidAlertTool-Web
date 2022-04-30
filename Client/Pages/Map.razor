@@ -1,0 +1,13 @@
+@page "/Map"
+@inject IJSRuntime JsRuntime
+
+<div id="mapdiv"></div>
+
+@code {
+
+    protected override async void OnAfterRender(Boolean firstRender)
+    {
+        await JsRuntime.InvokeVoidAsync("drawMap");
+    }
+
+}
