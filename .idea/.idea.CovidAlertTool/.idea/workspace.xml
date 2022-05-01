@@ -7,10 +7,10 @@
     <projectFile profileName="IIS Express">Client/CovidAlertTool.Client.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="Fixed page titles">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/0562dcda-0bdd-445e-8d83-334ebdb427b9.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/0562dcda-0bdd-445e-8d83-334ebdb427b9.xml" afterDir="false" />
+    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="ayayay">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Pages/Launch.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Launch.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +132,7 @@
       <workItem from="1651303892542" duration="4603000" />
       <workItem from="1651334014375" duration="62890000" />
       <workItem from="1651409818680" duration="5275000" />
-      <workItem from="1651415410249" duration="1067000" />
+      <workItem from="1651415410249" duration="3165000" />
     </task>
     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
       <created>1651308451623</created>
@@ -176,7 +176,14 @@
       <option name="project" value="LOCAL" />
       <updated>1651415775913</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="ayayay">
+      <created>1651416540971</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1651416540971</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -204,6 +211,7 @@
     <MESSAGE value="Worked on the UI" />
     <MESSAGE value="Finalizing website!" />
     <MESSAGE value="Fixed page titles" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed page titles" />
+    <MESSAGE value="ayayay" />
+    <option name="LAST_COMMIT_MESSAGE" value="ayayay" />
   </component>
 </project>

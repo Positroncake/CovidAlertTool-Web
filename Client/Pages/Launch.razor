@@ -68,29 +68,40 @@ button {
 	<h4>Get started</h4>
 	<br/>
 	<h6>1. Creating a new account</h6>
-	<p>Getting started is very easy - the first step is to create a new account. Press the button below and a 12-word passphrase will
-		be generated for you - this will be the key you login with. It's a secure but easily memorizable way to authenticate you!</p>
+	<p>
+		Getting started is very easy - the first step is to create a new account. Press the button below and a 12-word passphrase will
+		be generated for you - this will be the key you login with. It's a secure but easily memorizable way to authenticate you!
+	</p>
 	<h6>2. Plotting your first route</h6>
-	<p>Now that you've created your new account, let's go ahead and plot your first route. Head over to the "My Route" page. Notice
+	<p>
+		Now that you've created your new account, let's go ahead and plot your first route. Head over to the "My Route" page. Notice
 		how there are two options: Plot GPS Position and Plot Inputted Coordinates. Plot GPS Position is useful if you're on-the-go:
 		you can simply press the button every few minutes to record your journey. Plot Inputted Coordinates is useful if you're only
 		planning out a route: Simply input the latitude and longitude of your first waypoint, press the button, input the coordinates
-		for your next waypoint, and repeat until you're done!</p>
+		for your next waypoint, and repeat until you're done!
+	</p>
 	<h6>3. Viewing your route and nearby threats</h6>
-	<p>Let's head over to the "Map" page. Click the "Load my journey" button and a map will appear. You will notice a few symbols:
+	<p>
+		Let's head over to the "Map" page. Click the "Load my journey" button and a map will appear. You will notice a few symbols:
 		The black diamonds and blue lines are your route, the orange triangles are user-reported COVID cases, and the purple
 		squares are regional COVID stats obtained from public health agencies. Hovering over the icons will reveal the time the waypoint
 		was added to your route, the time the user reported the COVID case, and the details about the public health report for
-		that region, respectively.</p>
-	<h6>4. You're good to go!</h6>
+		that region, respectively.
+	</p>
+	<h6>4. Reporting COVID Cases</h6>
+	<p>
+		Reporting a COVID Case is very easy. Simply head to the "Report a COVID Case" page, and then either report the case
+		at your current GPS location or input latitude/longitude coordinates, just like plotting a route!
+	</p>
+	<h6>5. You're good to go!</h6>
 	<br/>
 	<button @onclick="NewAccount">@_newAccountText</button>
 	<br/>
 	@if (_key is not null)
-    {
-    	<p>Your key (12 words) are:</p>
-    	<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
-    }
+	{
+		<p>Your key (12 words) are:</p>
+		<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
+	}
 	@if (_showRedirectBtn)
 	{
 		<button onclick="location.href='/Journey';">Create my route</button>
