@@ -15,14 +15,13 @@ public class LocationController : ControllerBase
     {
         IAccess access = new Access();
         String hash = Utils.HashWords(location.Key);
-        foreach (String word in location.Key) Console.WriteLine(word);
-        Console.WriteLine(hash);
         var sql = $"SELECT * FROM {hash}";
-        
+
         // Checks if account is valid
         try
         {
-            List<Location> locations = await access.Query<Location, dynamic>(sql, new { }, Utils.UsersDatabaseConnectionString);
+            List<Location> locations =
+                await access.Query<Location, dynamic>(sql, new { }, Utils.UsersDatabaseConnectionString);
         }
         catch (MySqlException e)
         {
@@ -37,7 +36,7 @@ public class LocationController : ControllerBase
             location.Name
         }, Utils.UsersDatabaseConnectionString);
 
-        return Ok(query);
+        return Ok();
     }
 
     [HttpPost]
@@ -46,7 +45,6 @@ public class LocationController : ControllerBase
     {
         IAccess access = new Access();
         String hash = Utils.HashWords(key);
-        Console.WriteLine(hash);
         var sql = $"SELECT * FROM {hash}";
 
         List<Location> locations;
@@ -68,7 +66,8 @@ public class LocationController : ControllerBase
     public async Task<ActionResult> ReportCase(Location location)
     {
         IAccess access = new Access();
-        const String query = "INSERT INTO user_reports (Latitude, Longitude, Name) VALUES (@Latitude, @Longitude, @Name)";
+        const String query =
+            "INSERT INTO user_reports (Latitude, Longitude, Name) VALUES (@Latitude, @Longitude, @Name)";
         await access.Execute(query, new
         {
             location.Latitude,
@@ -76,7 +75,7 @@ public class LocationController : ControllerBase
             location.Name
         }, Utils.LocationsDatabaseConnectionString);
 
-        return Ok(query);
+        return Ok();
     }
 
     [HttpGet]
@@ -88,5 +87,16 @@ public class LocationController : ControllerBase
         List<Location> locations =
             await access.Query<Location, dynamic>(query, new { }, Utils.LocationsDatabaseConnectionString);
         return Ok(locations);
+    }
+
+    [HttpGet]
+    [Route("GetStats")]
+    public async Task<ActionResult> GetStats()
+    {
+        IAccess access = new Access();
+        const String query = "SELECT * FROM statistics";
+        List<RegionalCovidData> statistics =
+            await access.Query<RegionalCovidData, dynamic>(query, new { }, Utils.LocationsDatabaseConnectionString);
+        return Ok(statistics);
     }
 }

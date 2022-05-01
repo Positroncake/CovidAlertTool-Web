@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using CovidAlertTool.Client;
@@ -10,7 +11,8 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddGeolocationServices();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddGeolocationServices();
+builder.Services.AddBlazoredLocalStorage();
 
 await builder.Build().RunAsync();

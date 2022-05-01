@@ -7,6 +7,5 @@ public class RegionalCovidData
     public Double Longitude { get; set; }
     public Int32 Confirmed { get; set; }
     public Int32 Deaths { get; set; }
-    public String Region { get; set; } = String.Empty;
     public Double Rate { get; set; }
 }

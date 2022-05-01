@@ -7,13 +7,24 @@
     <projectFile profileName="IIS Express">Client/CovidAlertTool.Client.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" afterDir="false" />
+    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="Added covid reporting functionality">
+      <change afterPath="$PROJECT_DIR$/Client/Pages/Journey.razor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Pages/Launch.razor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Shared/TopNavbar.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Pages/Index.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Index.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Pages/ReportCase.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/ReportCase.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/wwwroot/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Shared/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Shared/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/wwwroot/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/css/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +75,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "/home/roncake/Desktop/04-30-2022.csv",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -144,7 +155,7 @@
       <option name="presentableId" value="Default" />
       <updated>1651303886875</updated>
       <workItem from="1651303892542" duration="4603000" />
-      <workItem from="1651334014375" duration="45747000" />
+      <workItem from="1651334014375" duration="60503000" />
     </task>
     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
       <created>1651308451623</created>
@@ -160,7 +171,14 @@
       <option name="project" value="LOCAL" />
       <updated>1651367631112</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added covid reporting functionality">
+      <created>1651386158977</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1651386158977</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,6 +202,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Added account creation and deletion system, login coming soon" />
     <MESSAGE value="File transfer to HKgame" />
-    <option name="LAST_COMMIT_MESSAGE" value="File transfer to HKgame" />
+    <MESSAGE value="Added covid reporting functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added covid reporting functionality" />
   </component>
 </project>

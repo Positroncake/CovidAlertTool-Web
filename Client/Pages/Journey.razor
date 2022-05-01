@@ -1,0 +1,120 @@
+@page "/Journey"
+@using CovidAlertTool.Shared
+@using Blazored.LocalStorage
+@using System.Net
+@inject ILocalStorageService LocalStorageService
+@inject HttpClient HttpClient
+@inject IGeolocationService GeolocationService
+<h3>My route/journey</h3>
+
+<button @onclick="SendGpsLoc">Send GPS position</button>
+<br/>
+
+<p>Latitude - Degrees Minutes Seconds</p>
+<input @bind="_latD"/>
+<input @bind="_latM"/>
+<input @bind="_latS"/>
+<p>Longitude - Degrees Minutes Seconds</p>
+<input @bind="_lonD"/>
+<input @bind="_lonM"/>
+<input @bind="_lonS"/>
+
+@if (!_hideKeyInput)
+{
+    <input @bind="_input[0]"/>
+    <input @bind="_input[1]"/>
+    <input @bind="_input[2]"/>
+    <input @bind="_input[3]"/>
+    <input @bind="_input[4]"/>
+    <input @bind="_input[5]"/>
+    <input @bind="_input[6]"/>
+    <input @bind="_input[7]"/>
+    <input @bind="_input[8]"/>
+    <input @bind="_input[9]"/>
+    <input @bind="_input[10]"/>
+    <input @bind="_input[11]"/>
+}
+
+<button @onclick="SendLoc">Send inputted coordinates</button>
+
+@code {
+
+    private String[] _input = new String[12];
+    private Boolean _hideKeyInput = true;
+    private String _latD, _latM, _latS;
+    private String _lonD, _lonM, _lonS;
+
+    GeolocationPosition _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
+
+    protected override void OnInitialized()
+    {
+        GeolocationService.GetCurrentPosition(this, nameof(OnPositionReceived));
+    }
+
+    private async void SendGpsLoc()
+    {
+        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
+        {
+            _hideKeyInput = false;
+            StateHasChanged();
+            return;
+        }
+
+        var location = new NewLocation();
+        location.Key = _hideKeyInput ? (await LocalStorageService.GetItemAsStringAsync("key")).Split(",") : _input;
+        location.Latitude = _position.Coords.Latitude;
+        location.Longitude = _position.Coords.Longitude;
+        location.Name = DateTime.UtcNow;
+
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+
+    // If login is successful and key is not stored
+        if (!response.IsSuccessStatusCode) return;
+        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
+            await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+    }
+
+    private async void SendLoc()
+    {
+        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
+        {
+            _hideKeyInput = false;
+            StateHasChanged();
+            return;
+        }
+
+        var location = new NewLocation();
+        location.Key = _hideKeyInput ? (await LocalStorageService.GetItemAsStringAsync("key")).Split(",") : _input;
+        if (D(_latD) < 0d) location.Latitude = D(_latD) - D(_latM) / 60 - D(_latS) / 3600;
+        else location.Latitude = D(_latD) + D(_latM) / 60 + D(_latS) / 3600;
+        if (D(_lonD) < 0d) location.Longitude = D(_lonD) - D(_lonM) / 60 - D(_lonS) / 3600;
+        else location.Longitude = D(_lonD) + D(_lonM) / 60 + D(_lonS) / 3600;
+        location.Name = DateTime.UtcNow;
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+
+    // If login is successful and key is not stored
+        if (!response.IsSuccessStatusCode) return;
+        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
+            await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+    }
+
+    private static Double D(String str) // Convert to double for code cleanliness (typing Double.Parse every time will get messy)
+    {
+        return Double.Parse(str);
+    }
+
+    [JSInvokable]
+    public void OnPositionReceived(GeolocationPosition position)
+    {
+        _position = position;
+    }
+
+    [JSInvokable]
+    public void OnPositionError(GeolocationPositionError positionError)
+    {
+        _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
+    }
+
+}

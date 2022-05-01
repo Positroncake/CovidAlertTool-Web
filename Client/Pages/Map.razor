@@ -2,74 +2,149 @@
 @using Syncfusion.Blazor.Maps
 @using CovidAlertTool.Shared
 @using System.Net
+@using Blazored.LocalStorage
 @inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorageService
 
-@if (_waypoints.Count is not 0)
+@if (_showLoading)
 {
-    <SfMaps Width="100%" Height="700">
-        <MapsZoomSettings Enable="true" MaxZoom="19" ZoomFactor="2">
-            <MapsZoomToolbarSettings>
-                <MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem> { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
-            </MapsZoomToolbarSettings>
-        </MapsZoomSettings>
-        <MapsLayers>
-            <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
-                <MapsMarkerSettings>
-                    <MapsMarker Visible="true" DataSource="_reports" Shape="MarkerType.Triangle" Height="15" Fill=" #f57600" Width="15" TValue="Location">
-                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
-                    </MapsMarker>
-                    <MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Diamond" Height="15" Fill="#000000" Width="15" TValue="Location">
-                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
-                    </MapsMarker>
-                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Circle" Height="30" Fill="#0066cc" Width="30">
-                        <MapsLayerMarkerClusterLabelStyle Color="#ffffff"></MapsLayerMarkerClusterLabelStyle>
-                    </MapsMarkerClusterSettings>
-                </MapsMarkerSettings>
-                <MapsNavigationLines>
-                    @for (var i = 0; i < _waypoints.Count - 1; ++i)
-                    {
-                        <MapsNavigationLine Visible="true" Width="13" Color="#0066cc" Angle="0"
-                                            Latitude="new[] { _waypoints.ElementAt(i).Latitude, _waypoints.ElementAt(i + 1).Latitude }"
-                                            Longitude="new[] { _waypoints.ElementAt(i).Longitude, _waypoints.ElementAt(i + 1).Longitude }">
-                        </MapsNavigationLine>
-                    }
-                </MapsNavigationLines>
-            </MapsLayer>
-        </MapsLayers>
-    </SfMaps>
+	<p>Generating map, please wait...</p>
 }
 
-<input @bind="_input[0]"/>
-<input @bind="_input[1]"/>
-<input @bind="_input[2]"/>
-<input @bind="_input[3]"/>
-<input @bind="_input[4]"/>
-<input @bind="_input[5]"/>
-<input @bind="_input[6]"/>
-<input @bind="_input[7]"/>
-<input @bind="_input[8]"/>
-<input @bind="_input[9]"/>
-<input @bind="_input[10]"/>
-<input @bind="_input[11]"/>
+@if (_statistics.Count is not 0)
+{
+	<SfMaps Width="1800" Height="600">
+		<MapsZoomSettings Enable="true" MaxZoom="19" ZoomFactor="11">
+			<MapsZoomToolbarSettings>
+				<MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem> { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
+			</MapsZoomToolbarSettings>
+		</MapsZoomSettings>
+		<MapsCenterPosition Latitude="_waypoints.First().Latitude" Longitude="_waypoints.First().Longitude"></MapsCenterPosition>
+		<MapsLayers>
+			<MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
+				<MapsMarkerSettings>
+					<MapsMarker Visible="true" DataSource="_reports" Shape="MarkerType.Triangle" Height="15" Fill=" #f57600" Width="15" TValue="Location">
+						<MapsMarkerTooltipSettings ValuePath="Description" Visible="true"></MapsMarkerTooltipSettings>
+					</MapsMarker>
+					<MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Diamond" Height="15" Fill="#000000" Width="15" TValue="Location">
+						<MapsMarkerTooltipSettings ValuePath="Description" Visible="true"></MapsMarkerTooltipSettings>
+					</MapsMarker>
+					<MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Circle" Height="30" Fill="#0066cc" Width="30">
+						<MapsLayerMarkerClusterLabelStyle Color="#ffffff"></MapsLayerMarkerClusterLabelStyle>
+					</MapsMarkerClusterSettings>
+					<MapsMarker Visible="true" DataSource="_statistics" Shape="MarkerType.Rectangle" Height="15" Fill="#9d00d4" Width="15" TValue="Region">
+						<MapsMarkerTooltipSettings ValuePath="Description" Visible="true"></MapsMarkerTooltipSettings>
+					</MapsMarker>
+				</MapsMarkerSettings>
+				<MapsNavigationLines>
+					@for (var i = 0; i < _waypoints.Count - 1; ++i)
+					{
+						<MapsNavigationLine Visible="true" Width="16" Color="#0066cc" Angle="0"
+						                    Latitude="new[] { _waypoints.ElementAt(i).Latitude, _waypoints.ElementAt(i + 1).Latitude }"
+						                    Longitude="new[] { _waypoints.ElementAt(i).Longitude, _waypoints.ElementAt(i + 1).Longitude }">
+						</MapsNavigationLine>
+					}
+				</MapsNavigationLines>
+			</MapsLayer>
+		</MapsLayers>
+	</SfMaps>
+	}
 
-<button @onclick="LoadJourney">Load my journey</button>
+	@if (!_hideKeyInput)
+	{
+		<input @bind="_input[0]"/>
+		<input @bind="_input[1]"/>
+		<input @bind="_input[2]"/>
+		<input @bind="_input[3]"/>
+		<input @bind="_input[4]"/>
+		<input @bind="_input[5]"/>
+		<input @bind="_input[6]"/>
+		<input @bind="_input[7]"/>
+		<input @bind="_input[8]"/>
+		<input @bind="_input[9]"/>
+		<input @bind="_input[10]"/>
+		<input @bind="_input[11]"/>
+	}
 
-@code{
+	<button @onclick="LoadJourney">Load my journey</button>
 
-    private List<Location> _waypoints = new();
-    private List<Location> _reports = new();
-    private List<RegionalCovidData> _statistics = new();
-    private String[] _input = new String[12];
+	@code{
 
-    private async void LoadJourney()
-    {
-        _input = new[] { "apps", "educators", "behavioral", "grams", "degrees", "swim", "annually", "adoption", "smart", "friend", "min", "bidding" };
-        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-        _waypoints = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
-        response = await HttpClient.GetAsync("LocationApi/GetReports");
-        _reports = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
-        StateHasChanged();
-    }
+		private Boolean _hideKeyInput = true;
+		private Boolean _showLoading = false;
 
-}
+		private class Region
+		{
+			public Double Latitude { get; set; }
+			public Double Longitude { get; set; }
+			public String Description { get; set; } = String.Empty;
+		}
+
+		private List<Region> _waypoints = new();
+		private List<Location> _wpt = new();
+		private List<Region> _reports = new();
+		private List<Location> _rpt = new();
+		private List<Region> _statistics = new();
+		private List<RegionalCovidData> _stats = new();
+		private String[] _input = new String[12];
+
+		private async void LoadJourney()
+		{
+			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
+			{
+				_hideKeyInput = false;
+				StateHasChanged();
+				return;
+			}
+
+			_showLoading = true;
+			StateHasChanged();
+
+			if (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync("key")).Split(",");
+			HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+			while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+			_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+			foreach (Location location in _wpt)
+			{
+				_waypoints.Add(new Region
+				{
+					Latitude = location.Latitude,
+					Longitude = location.Longitude,
+					Description = $"{location.Name}   "
+				});
+			}
+
+			response = await HttpClient.GetAsync("LocationApi/GetReports");
+			_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+			foreach (Location location in _rpt)
+			{
+				_reports.Add(new Region
+				{
+					Latitude = location.Latitude,
+					Longitude = location.Longitude,
+					Description = $"{location.Name}   "
+				});
+			}
+
+			response = await HttpClient.GetAsync("LocationApi/GetStats");
+			_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();
+			foreach (RegionalCovidData statistic in _stats)
+			{
+				_statistics.Add(new Region
+				{
+					Latitude = statistic.Latitude,
+					Longitude = statistic.Longitude,
+					Description = $"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString("0.###")}% death rate as of {statistic.Updated}      "
+				});
+			}
+			StateHasChanged();
+
+			if (!response.IsSuccessStatusCode) return;
+			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
+				await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+
+			_showLoading = false;
+			StateHasChanged();
+		}
+
+	}

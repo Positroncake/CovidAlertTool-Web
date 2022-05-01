@@ -1,5 +1,4 @@
 using DatabaseAccess;
-using Microsoft.AspNetCore.ResponseCompression;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

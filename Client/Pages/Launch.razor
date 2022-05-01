@@ -1,0 +1,81 @@
+@page "/Launch"
+@using System.Net
+@using Blazored.LocalStorage
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>CovidAlertTool - Home</PageTitle>
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        padding: 10px;
+    }
+    
+    .grid-item {
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="center">
+	<button class="btn btn-light" @onclick="NewAccount">New Account</button>
+</div>
+<br/>
+
+@if (_key is not null)
+{
+	<p>Your key (12 words) are:</p>
+	<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
+}
+
+@if (!_hideKeyInput)
+{
+	<div class="grid-container">
+		<div class="grid-item">1 <span><input @bind="_input[0]"/></span></div>
+		<div class="grid-item">2 <span><input @bind="_input[1]"/></span></div>
+		<div class="grid-item">3 <span><input @bind="_input[2]"/></span></div>
+		<div class="grid-item">4 <span><input @bind="_input[3]"/></span></div>
+		<div class="grid-item">5 <span><input @bind="_input[4]"/></span></div>
+		<div class="grid-item">6 <span><input @bind="_input[5]"/></span></div>
+		<div class="grid-item">7 <span><input @bind="_input[6]"/></span></div>
+		<div class="grid-item">8 <span><input @bind="_input[7]"/></span></div>
+		<div class="grid-item">9 <span><input @bind="_input[8]"/></span></div>
+		<div class="grid-item">10 <span><input @bind="_input[9]"/></span></div>
+		<div class="grid-item">11 <span><input @bind="_input[10]"/></span></div>
+		<div class="grid-item">12 <span><input @bind="_input[11]"/></span></div>
+	</div>
+}
+
+<button @onclick="DeleteAccount">Delete Account</button>
+
+@code {
+
+	private Boolean _hideKeyInput = true;
+	private String[] _input = new String[12];
+	private String[]? _key;
+
+	private async void NewAccount()
+	{
+		HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
+		while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
+		_key = (await response.Content.ReadFromJsonAsync<String[]>())!;
+		await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _key));
+		StateHasChanged();
+	}
+
+	private async void DeleteAccount()
+	{
+		if (_hideKeyInput)
+		{
+			_hideKeyInput = false;
+			return;
+		}
+		await HttpClient.PostAsJsonAsync("UserApi/Delete", _input);
+		if (await LocalStorageService.ContainKeyAsync("key")) await LocalStorageService.RemoveItemAsync("key");
+		_hideKeyInput = true;
+		StateHasChanged();
+	}
+
+}
