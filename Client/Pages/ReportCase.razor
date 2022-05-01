@@ -3,20 +3,88 @@
 @using CovidAlertTool.Shared
 @inject HttpClient HttpClient
 @inject IGeolocationService GeolocationService
-<h3>Report A Case</h3>
-
-<button @onclick="ReportAtGpsPos">Report a case at my current GPS position</button>
+<h2>Report A Case</h2>
 <br/>
+<style>
+    button {
+         padding: 15px 25px;
+         border: unset;
+         border-radius: 15px;
+         color: #212121;
+         z-index: 1;
+         background: #e8e8e8;
+         position: relative;
+         font-weight: 1000;
+         font-size: 17px;
+         -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+         box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+         transition: all 250ms;
+         overflow: hidden;
+        }
+        
+        button::before {
+         content: "";
+         position: absolute;
+         top: 0;
+         left: 0;
+         height: 100%;
+         width: 0;
+         border-radius: 15px;
+         background-color: #212121;
+         z-index: -1;
+         -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+         box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+         transition: all 250ms
+        }
+        
+        button:hover {
+         color: #e8e8e8;
+        }
+        
+        button:hover::before {
+         width: 100%;
+        }
+        input[type=text] {
+              width: 15%;
+              padding: 12px 20px;
+              margin: 8px 0;
+              box-sizing: border-box;
+              border: 3px solid #ccc;
+              -webkit-transition: 0.5s;
+              transition: 0.5s;
+              outline: none;
+            }
+            .second[type=text] {
+                  width: 30%;
+                  padding: 12px 20px;
+                  margin: 8px 0;
+                  box-sizing: border-box;
+                  border: 3px solid #ccc;
+                  -webkit-transition: 0.5s;
+                  transition: 0.5s;
+                  outline: none;
+            }
+            
+            input[type=text]:focus {
+              border: 5px solid #000000;
+            }
+</style>
+<br/>
+<button @onclick="ReportAtGpsPos">Report a case at my current GPS position</button>
+<br/><br/>
 
-<p>Latitude - Degrees Minutes Seconds</p>
-<input @bind="_latD"/>
-<input @bind="_latM"/>
-<input @bind="_latS"/>
-<p>Longitude - Degrees Minutes Seconds</p>
-<input @bind="_lonD"/>
-<input @bind="_lonM"/>
-<input @bind="_lonS"/>
-
+<h2>Latitude - Degrees Minutes Seconds</h2>
+<br/>
+<input type="text"@bind="_latD"/>
+<input type="text"@bind="_latM"/>
+<input type="text" class="second"@bind="_latS"/>
+<br/><br/>
+<h2>Longitude - Degrees Minutes Seconds</h2>
+<br/>
+<input type="text"@bind="_lonD"/>
+<input type="text"@bind="_lonM"/>
+<input type="text" class="second"@bind="_lonS"/>
+<br/><br/>
 <button @onclick="ReportAtLatLon">Report a case at the inputted latitude/longitude coordinates</button>
 
 @code {
