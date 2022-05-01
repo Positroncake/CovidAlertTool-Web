@@ -4,24 +4,26 @@
 @using System.Net
 @inject HttpClient HttpClient
 
-@if (_waypoints is not null)
+@if (_waypoints.Count is not 0)
 {
     <SfMaps Width="100%" Height="700">
         <MapsZoomSettings Enable="true" MaxZoom="19" ZoomFactor="2">
             <MapsZoomToolbarSettings>
-                <MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem>() { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
+                <MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem> { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
             </MapsZoomToolbarSettings>
         </MapsZoomSettings>
-        <MapsCenterPosition Latitude="29.394708" Longitude="-94.954653"></MapsCenterPosition>
         <MapsLayers>
             <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
                 <MapsMarkerSettings>
+                    <MapsMarker Visible="true" DataSource="_reports" Shape="MarkerType.Triangle" Height="15" Fill=" #f57600" Width="15" TValue="Location">
+                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
+                    </MapsMarker>
                     <MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Diamond" Height="15" Fill="#000000" Width="15" TValue="Location">
                         <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
                     </MapsMarker>
-                    <MapsMarker Visible="true" DataSource="_reports" Shape="MarkerType.Triangle" Height="15" Fill="orange" Width="15" TValue="Location">
-                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
-                    </MapsMarker>
+                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Circle" Height="30" Fill="#0066cc" Width="30">
+                        <MapsLayerMarkerClusterLabelStyle Color="#ffffff"></MapsLayerMarkerClusterLabelStyle>
+                    </MapsMarkerClusterSettings>
                 </MapsMarkerSettings>
                 <MapsNavigationLines>
                     @for (var i = 0; i < _waypoints.Count - 1; ++i)
@@ -54,21 +56,19 @@
 
 @code{
 
-    private List<Location>? _waypoints;
-    private List<Location>? _reports;
-    private readonly String[] _input = new String[12];
-
-    protected override async Task OnInitializedAsync()
-    {
-        HttpResponseMessage response = await HttpClient.GetAsync("LocationApi/GetReports");
-        _reports = await response.Content.ReadFromJsonAsync<List<Location>>();
-    }
+    private List<Location> _waypoints = new();
+    private List<Location> _reports = new();
+    private List<RegionalCovidData> _statistics = new();
+    private String[] _input = new String[12];
 
     private async void LoadJourney()
     {
+        _input = new[] { "apps", "educators", "behavioral", "grams", "degrees", "swim", "annually", "adoption", "smart", "friend", "min", "bidding" };
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
         while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-        _waypoints = await response.Content.ReadFromJsonAsync<List<Location>>();
+        _waypoints = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+        response = await HttpClient.GetAsync("LocationApi/GetReports");
+        _reports = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
         StateHasChanged();
     }
 

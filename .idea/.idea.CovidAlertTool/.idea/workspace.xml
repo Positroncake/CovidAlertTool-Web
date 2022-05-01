@@ -7,8 +7,13 @@
     <projectFile profileName="IIS Express">Client/CovidAlertTool.Client.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="File transfer to HKgame">
+    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/wwwroot/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +30,18 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b37bdcda3df384671c8eed0dd528e74eff6e04eeb7b1e81f219e5e066318/ComponentBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Client/Pages/Index.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Server/Controllers/UserController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -46,6 +63,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/roncake/Desktop/04-30-2022.csv",
     "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   },
@@ -126,7 +144,7 @@
       <option name="presentableId" value="Default" />
       <updated>1651303886875</updated>
       <workItem from="1651303892542" duration="4603000" />
-      <workItem from="1651334014375" duration="39194000" />
+      <workItem from="1651334014375" duration="45747000" />
     </task>
     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
       <created>1651308451623</created>
