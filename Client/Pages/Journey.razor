@@ -71,7 +71,7 @@
     }
 </style>
 <br/>
-<button @onclick="SendGpsLoc">Send GPS position</button>
+<button @onclick="SendGpsLoc">@_sendGpsLocText</button>
 <br/><br/><br/>
 
 <h2>Latitude - Degrees Minutes Seconds</h2>
@@ -86,22 +86,24 @@
 <input type="text"@bind="_lonM"/>
 <input type ="text"class="second"@bind="_lonS"/>
 <br/><br/>
-<button @onclick="SendLoc">Send inputted coordinates</button>
+<button @onclick="SendLoc">@_sendLatLonText</button>
 
 @if (!_hideKeyInput)
 {
-    <input @bind="_input[0]"/>
-    <input @bind="_input[1]"/>
-    <input @bind="_input[2]"/>
-    <input @bind="_input[3]"/>
-    <input @bind="_input[4]"/>
-    <input @bind="_input[5]"/>
-    <input @bind="_input[6]"/>
-    <input @bind="_input[7]"/>
-    <input @bind="_input[8]"/>
-    <input @bind="_input[9]"/>
-    <input @bind="_input[10]"/>
-    <input @bind="_input[11]"/>
+    <div class="grid-container">
+        <div class="grid-item">1 <span><input @bind="_input[0]"/></span></div>
+        <div class="grid-item">2 <span><input @bind="_input[1]"/></span></div>
+        <div class="grid-item">3 <span><input @bind="_input[2]"/></span></div>
+        <div class="grid-item">4 <span><input @bind="_input[3]"/></span></div>
+        <div class="grid-item">5 <span><input @bind="_input[4]"/></span></div>
+        <div class="grid-item">6 <span><input @bind="_input[5]"/></span></div>
+        <div class="grid-item">7 <span><input @bind="_input[6]"/></span></div>
+        <div class="grid-item">8 <span><input @bind="_input[7]"/></span></div>
+        <div class="grid-item">9 <span><input @bind="_input[8]"/></span></div>
+        <div class="grid-item">10 <span><input @bind="_input[9]"/></span></div>
+        <div class="grid-item">11 <span><input @bind="_input[10]"/></span></div>
+        <div class="grid-item">12 <span><input @bind="_input[11]"/></span></div>
+    </div>
 }
 
 
@@ -111,6 +113,8 @@
     private Boolean _hideKeyInput = true;
     private String _latD, _latM, _latS;
     private String _lonD, _lonM, _lonS;
+    private String _sendGpsLocText = "Plot GPS Position";
+    private String _sendLatLonText = "Plot Inputted Coordinates";
 
     GeolocationPosition _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
 
@@ -141,6 +145,12 @@
         if (!response.IsSuccessStatusCode) return;
         if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
             await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+
+        _sendGpsLocText = "Sent!";
+        StateHasChanged();
+        await Task.Delay(3000);
+        _sendGpsLocText = "Plot GPS Position";
+        StateHasChanged();
     }
 
     private async void SendLoc()
@@ -166,6 +176,12 @@
         if (!response.IsSuccessStatusCode) return;
         if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
             await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+        
+        _sendLatLonText = "Sent!";
+        StateHasChanged();
+        await Task.Delay(3000);
+        _sendLatLonText = "Plot Inputted Coordinates";
+        StateHasChanged();
     }
 
     private static Double D(String str) // Convert to double for code cleanliness (typing Double.Parse every time will get messy)

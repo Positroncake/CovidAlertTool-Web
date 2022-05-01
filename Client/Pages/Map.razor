@@ -19,7 +19,10 @@
 				<MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem> { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
 			</MapsZoomToolbarSettings>
 		</MapsZoomSettings>
-		<MapsCenterPosition Latitude="_waypoints.First().Latitude" Longitude="_waypoints.First().Longitude"></MapsCenterPosition>
+		@if (_waypoints.Count >= 1)
+		{
+			<MapsCenterPosition Latitude="_waypoints.First().Latitude" Longitude="_waypoints.First().Longitude"></MapsCenterPosition>
+		}
 		<MapsLayers>
 			<MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
 				<MapsMarkerSettings>
@@ -48,24 +51,86 @@
 			</MapsLayer>
 		</MapsLayers>
 	</SfMaps>
-	}
+}
 
-	@if (!_hideKeyInput)
-	{
-		<input @bind="_input[0]"/>
-		<input @bind="_input[1]"/>
-		<input @bind="_input[2]"/>
-		<input @bind="_input[3]"/>
-		<input @bind="_input[4]"/>
-		<input @bind="_input[5]"/>
-		<input @bind="_input[6]"/>
-		<input @bind="_input[7]"/>
-		<input @bind="_input[8]"/>
-		<input @bind="_input[9]"/>
-		<input @bind="_input[10]"/>
-		<input @bind="_input[11]"/>
-	}
-		<style>button {
+@if (!_hideKeyInput)
+{
+	<div class="grid-container">
+		<div class="grid-item">
+			1
+			<span>
+				<input @bind="_input[0]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			2
+			<span>
+				<input @bind="_input[1]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			3
+			<span>
+				<input @bind="_input[2]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			4
+			<span>
+				<input @bind="_input[3]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			5
+			<span>
+				<input @bind="_input[4]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			6
+			<span>
+				<input @bind="_input[5]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			7
+			<span>
+				<input @bind="_input[6]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			8
+			<span>
+				<input @bind="_input[7]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			9
+			<span>
+				<input @bind="_input[8]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			10
+			<span>
+				<input @bind="_input[9]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			11
+			<span>
+				<input @bind="_input[10]"/>
+			</span>
+		</div>
+		<div class="grid-item">
+			12
+			<span>
+				<input @bind="_input[11]"/>
+			</span>
+		</div>
+	</div>
+}
+<style>button {
             padding: 15px 25px;
             border: unset;
             border-radius: 15px;
@@ -103,85 +168,106 @@
            button:hover::before {
             width: 100%;
            }</style>
-	<button @onclick="LoadJourney">Load my journey</button>
+<button @onclick="LoadJourney">Load my journey</button>
 
-	@code{
+<button @onclick="DeleteAccount">@_deleteButtonText</button>
 
-		private Boolean _hideKeyInput = true;
-		private Boolean _showLoading = false;
+@code{
 
-		private class Region
-		{
-			public Double Latitude { get; set; }
-			public Double Longitude { get; set; }
-			public String Description { get; set; } = String.Empty;
-		}
+	private Boolean _hideKeyInput = true;
+	private Boolean _showLoading;
+	private String _deleteButtonText = "Wipe all my data";
 
-		private List<Region> _waypoints = new();
-		private List<Location> _wpt = new();
-		private List<Region> _reports = new();
-		private List<Location> _rpt = new();
-		private List<Region> _statistics = new();
-		private List<RegionalCovidData> _stats = new();
-		private String[] _input = new String[12];
-
-		private async void LoadJourney()
-		{
-			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
-			{
-				_hideKeyInput = false;
-				StateHasChanged();
-				return;
-			}
-
-			_showLoading = true;
-			StateHasChanged();
-
-			if (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync("key")).Split(",");
-			HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-			while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-			_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
-			foreach (Location location in _wpt)
-			{
-				_waypoints.Add(new Region
-				{
-					Latitude = location.Latitude,
-					Longitude = location.Longitude,
-					Description = $"{location.Name}   "
-				});
-			}
-
-			response = await HttpClient.GetAsync("LocationApi/GetReports");
-			_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
-			foreach (Location location in _rpt)
-			{
-				_reports.Add(new Region
-				{
-					Latitude = location.Latitude,
-					Longitude = location.Longitude,
-					Description = $"{location.Name}   "
-				});
-			}
-
-			response = await HttpClient.GetAsync("LocationApi/GetStats");
-			_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();
-			foreach (RegionalCovidData statistic in _stats)
-			{
-				_statistics.Add(new Region
-				{
-					Latitude = statistic.Latitude,
-					Longitude = statistic.Longitude,
-					Description = $"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString("0.###")}% death rate as of {statistic.Updated}      "
-				});
-			}
-			StateHasChanged();
-
-			if (!response.IsSuccessStatusCode) return;
-			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
-				await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
-
-			_showLoading = false;
-			StateHasChanged();
-		}
-
+	private class Region
+	{
+		public Double Latitude { get; set; }
+		public Double Longitude { get; set; }
+		public String Description { get; set; } = String.Empty;
 	}
+
+	private List<Region> _waypoints = new();
+	private List<Location> _wpt = new();
+	private List<Region> _reports = new();
+	private List<Location> _rpt = new();
+	private List<Region> _statistics = new();
+	private List<RegionalCovidData> _stats = new();
+	private String[] _input = new String[12];
+
+	private async void LoadJourney()
+	{
+		if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
+		{
+			_hideKeyInput = false;
+			StateHasChanged();
+			return;
+		}
+
+		_showLoading = true;
+		StateHasChanged();
+
+		if (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync("key")).Split(",");
+		HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+		while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+		_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+		foreach (Location location in _wpt)
+		{
+			_waypoints.Add(new Region
+			{
+				Latitude = location.Latitude,
+				Longitude = location.Longitude,
+				Description = $"{location.Name}   "
+			});
+		}
+
+		response = await HttpClient.GetAsync("LocationApi/GetReports");
+		_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+		foreach (Location location in _rpt)
+		{
+			_reports.Add(new Region
+			{
+				Latitude = location.Latitude,
+				Longitude = location.Longitude,
+				Description = $"{location.Name}   "
+			});
+		}
+
+		response = await HttpClient.GetAsync("LocationApi/GetStats");
+		_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();
+		foreach (RegionalCovidData statistic in _stats)
+		{
+			_statistics.Add(new Region
+			{
+				Latitude = statistic.Latitude,
+				Longitude = statistic.Longitude,
+				Description = $"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString("0.###")}% death rate as of {statistic.Updated}      "
+			});
+		}
+		StateHasChanged();
+
+		if (!response.IsSuccessStatusCode) return;
+		if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
+			await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+
+		_showLoading = false;
+		StateHasChanged();
+	}
+
+	private async void DeleteAccount()
+	{
+		_deleteButtonText = "Deleting...";
+		if (_hideKeyInput)
+		{
+			_hideKeyInput = false;
+			return;
+		}
+		await HttpClient.PostAsJsonAsync("UserApi/Delete", _input);
+		if (!String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key"))) await LocalStorageService.RemoveItemAsync("key");
+		_hideKeyInput = true;
+		_deleteButtonText = "Deleted!";
+		StateHasChanged();
+		await Task.Delay(5000);
+		_deleteButtonText = "Wipe all my data";
+		StateHasChanged();
+	}
+
+}

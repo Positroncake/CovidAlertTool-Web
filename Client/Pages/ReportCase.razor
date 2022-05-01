@@ -70,7 +70,7 @@
             }
 </style>
 <br/>
-<button @onclick="ReportAtGpsPos">Report a case at my current GPS position</button>
+<button @onclick="ReportAtGpsPos">@_reportGpsText</button>
 <br/><br/>
 
 <h2>Latitude - Degrees Minutes Seconds</h2>
@@ -85,12 +85,13 @@
 <input type="text"@bind="_lonM"/>
 <input type="text" class="second"@bind="_lonS"/>
 <br/><br/>
-<button @onclick="ReportAtLatLon">Report a case at the inputted latitude/longitude coordinates</button>
+<button @onclick="ReportAtLatLon">@_reportLatLonText</button>
 
 @code {
     
     private String _latD, _latM, _latS;
     private String _lonD, _lonM, _lonS;
+    private String _reportGpsText = "Report a case at my current GPS position", _reportLatLonText = "Report a case at the inputted latitude/longitude coordinates";
 
     GeolocationPosition _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
 
@@ -109,6 +110,11 @@
         };
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
         while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
+        _reportGpsText = "Reported!";
+        StateHasChanged();
+        await Task.Delay(3000);
+        _reportGpsText = "Report a case at my current GPS position";
+        StateHasChanged();
     }
 
     private async void ReportAtLatLon()
@@ -121,6 +127,11 @@
         location.Name = DateTime.UtcNow;
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
         while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
+        _reportLatLonText = "Reported!";
+        StateHasChanged();
+        await Task.Delay(3000);
+        _reportLatLonText = "Report a case at the inputted latitude/longitude coordinates";
+        StateHasChanged();
     }
     
     private static Double D(String str) // Convert to double for code cleanliness (typing Double.Parse every time will get messy)

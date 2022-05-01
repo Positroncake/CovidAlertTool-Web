@@ -1,5 +1,12 @@
 ﻿@page "/"
 <style>
+	.center {
+		margin: auto;
+		text-align: center;
+		width: 60%;
+		padding: 10px;
+	}
+	
     button {
          padding: 15px 25px;
          border: unset;
@@ -40,5 +47,29 @@
         }
 </style>
 <body>
-    <button onclick="location.href = '/Launch';">Get started</button>
+
+<div class="center">
+	<h4>Find where Covid is, anywhere you go! Welcome to CovidAlertTool, The online personal bubble that won’t pop.</h4>
+	<br/>
+	<h6>Private:</h6>
+	<p>
+		CovidAlertTool values your privacy above everything - unlike many other contact tracing apps, we don't store any personal data,
+		and all location data is encrypted. This means that nobody but <b>you</b> can access your data.
+	</p>
+	<h6>Advanced warning system:</h6>
+	<p>
+		CovidAlertTool wants to make sure that you're safe! Every journey you take is compared against a massive database of covid reports
+		submitted by users but also sourced from public health agencies. If you come close to somewhere with recently reported covid cases,
+		CovidAlertTool will warn you. Additionally, CovidAlertTool will display a summary for you at the end of each journey, giving you
+		a debriefing of your journey and highlighting any risks you may have faced.
+	</p>
+	<h6>Use it anywhere:</h6>
+	<p>
+		CovidAlertTool is available as a webapp and a mobile app, allowing for maximum flexibility. It's the best of both worlds -
+		you get to plot your routes or scroll through the map on your large display, while at the same time get a highly-accurate
+		location from your mobile device.
+	</p>
+	
+	<button onclick="location.href = '/Launch';">Get started</button>
+</div>
 </body>

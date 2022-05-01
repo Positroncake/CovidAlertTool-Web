@@ -4,7 +4,7 @@
 @inject HttpClient HttpClient
 @inject ILocalStorageService LocalStorageService
 
-<PageTitle>CovidAlertTool - Home</PageTitle>
+<PageTitle>CovidAlertTool</PageTitle>
 
 <style>
 button {
@@ -55,10 +55,36 @@ button {
         padding: 20px;
         text-align: center;
     }
+	
+	.center {
+		margin: auto;
+		text-align: center;
+		width: 60%;
+		padding: 10px;
+	}
 </style>
 
 <div class="center">
-	<button @onclick="NewAccount">New Account</button>
+	<h4>Get started</h4>
+	<br/>
+	<h6>1. Creating a new account</h6>
+	<p>Getting started is very easy - the first step is to create a new account. Press the button below and a 12-word passphrase will
+		be generated for you - this will be the key you login with. It's a secure but easily memorizable way to authenticate you!</p>
+	<h6>2. Plotting your first route</h6>
+	<p>Now that you've created your new account, let's go ahead and plot your first route. Head over to the "My Route" page. Notice
+		how there are two options: Plot GPS Position and Plot Inputted Coordinates. Plot GPS Position is useful if you're on-the-go:
+		you can simply press the button every few minutes to record your journey. Plot Inputted Coordinates is useful if you're only
+		planning out a route: Simply input the latitude and longitude of your first waypoint, press the button, input the coordinates
+		for your next waypoint, and repeat until you're done!</p>
+	<h6>3. Viewing your route and nearby threats</h6>
+	<p>Let's head over to the "Map" page. Click the "Load my journey" button and a map will appear. You will notice a few symbols:
+		The black diamonds and blue lines are your route, the orange triangles are user-reported COVID cases, and the purple
+		squares are regional COVID stats obtained from public health agencies. Hovering over the icons will reveal the time the waypoint
+		was added to your route, the time the user reported the COVID case, and the details about the public health report for
+		that region, respectively.</p>
+	<h6>4. You're good to go!</h6>
+	<br/>
+	<button @onclick="NewAccount">@_newAccountText</button>
 </div>
 <br/>
 
@@ -68,51 +94,22 @@ button {
 	<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
 }
 
-@if (!_hideKeyInput)
-{
-	<div class="grid-container">
-		<div class="grid-item">1 <span><input @bind="_input[0]"/></span></div>
-		<div class="grid-item">2 <span><input @bind="_input[1]"/></span></div>
-		<div class="grid-item">3 <span><input @bind="_input[2]"/></span></div>
-		<div class="grid-item">4 <span><input @bind="_input[3]"/></span></div>
-		<div class="grid-item">5 <span><input @bind="_input[4]"/></span></div>
-		<div class="grid-item">6 <span><input @bind="_input[5]"/></span></div>
-		<div class="grid-item">7 <span><input @bind="_input[6]"/></span></div>
-		<div class="grid-item">8 <span><input @bind="_input[7]"/></span></div>
-		<div class="grid-item">9 <span><input @bind="_input[8]"/></span></div>
-		<div class="grid-item">10 <span><input @bind="_input[9]"/></span></div>
-		<div class="grid-item">11 <span><input @bind="_input[10]"/></span></div>
-		<div class="grid-item">12 <span><input @bind="_input[11]"/></span></div>
-	</div>
-}
-
-<button @onclick="DeleteAccount">Delete Account</button>
-
 @code {
 
-	private Boolean _hideKeyInput = true;
-	private String[] _input = new String[12];
 	private String[]? _key;
+	private String _newAccountText = "New Account";
 
 	private async void NewAccount()
 	{
+		_newAccountText = "Generating...";
 		HttpResponseMessage response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
 		while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("UserApi/New", "");
 		_key = (await response.Content.ReadFromJsonAsync<String[]>())!;
 		await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _key));
+		_newAccountText = "Generated!";
 		StateHasChanged();
-	}
-
-	private async void DeleteAccount()
-	{
-		if (_hideKeyInput)
-		{
-			_hideKeyInput = false;
-			return;
-		}
-		await HttpClient.PostAsJsonAsync("UserApi/Delete", _input);
-		if (await LocalStorageService.ContainKeyAsync("key")) await LocalStorageService.RemoveItemAsync("key");
-		_hideKeyInput = true;
+		await Task.Delay(5000);
+		_newAccountText = "New Account";
 		StateHasChanged();
 	}
 
