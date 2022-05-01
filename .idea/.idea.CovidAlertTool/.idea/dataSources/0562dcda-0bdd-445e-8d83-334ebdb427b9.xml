@@ -1045,31 +1045,15 @@ covid_alert_tool_users|schema||calusers|localhost|grant option|G</Grants>
     <user id="327" parent="1" name="calusers">
       <Host>localhost</Host>
     </user>
-    <table id="328" parent="324" name="0ADDCD9D673BF46E41700CAD9FD7BA6B93C8C34C6B0AF4E37ECC0CBF0F325529">
+    <table id="328" parent="324" name="words">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_unicode_ci</CollationName>
     </table>
-    <table id="329" parent="324" name="words">
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_unicode_ci</CollationName>
-    </table>
-    <column id="330" parent="328" name="Latitude">
-      <DataType>double|0s</DataType>
-      <Position>1</Position>
-    </column>
-    <column id="331" parent="328" name="Longitude">
-      <DataType>double|0s</DataType>
-      <Position>2</Position>
-    </column>
-    <column id="332" parent="328" name="Name">
-      <DataType>datetime|0s</DataType>
-      <Position>3</Position>
-    </column>
-    <column id="333" parent="329" name="Id">
+    <column id="329" parent="328" name="Id">
       <DataType>smallint(6)|0s</DataType>
       <Position>1</Position>
     </column>
-    <column id="334" parent="329" name="Word">
+    <column id="330" parent="328" name="Word">
       <DataType>tinytext|0s</DataType>
       <Position>2</Position>
     </column>

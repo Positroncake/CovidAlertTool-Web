@@ -85,19 +85,23 @@ button {
 	<h6>4. You're good to go!</h6>
 	<br/>
 	<button @onclick="NewAccount">@_newAccountText</button>
+	<br/>
+	@if (_key is not null)
+    {
+    	<p>Your key (12 words) are:</p>
+    	<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
+    }
+	@if (_showRedirectBtn)
+	{
+		<button onclick="location.href='/Journey';">Create my route</button>
+	}
 </div>
-<br/>
-
-@if (_key is not null)
-{
-	<p>Your key (12 words) are:</p>
-	<p>@_key[0], @_key[1], @_key[2], @_key[3], @_key[4], @_key[5], @_key[6], @_key[7], @_key[8], @_key[9], @_key[10], @_key[11]</p>
-}
 
 @code {
 
 	private String[]? _key;
 	private String _newAccountText = "New Account";
+	private Boolean _showRedirectBtn;
 
 	private async void NewAccount()
 	{
@@ -107,6 +111,7 @@ button {
 		_key = (await response.Content.ReadFromJsonAsync<String[]>())!;
 		await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _key));
 		_newAccountText = "Generated!";
+		_showRedirectBtn = true;
 		StateHasChanged();
 		await Task.Delay(5000);
 		_newAccountText = "New Account";
