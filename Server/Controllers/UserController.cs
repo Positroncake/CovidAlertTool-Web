@@ -29,9 +29,9 @@ public class UserController : ControllerBase
         // Hash password and create new user
         String hash = Utils.HashWords(words);
         var query = @$"CREATE TABLE {hash} (
-    Lat TEXT,
-    Lon TEXT,
-    T DATETIME
+    Latitude DOUBLE,
+    Longitude DOUBLE,
+    Name DATETIME
 )";
         await access.Execute(query, new
         {

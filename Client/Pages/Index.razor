@@ -30,21 +30,21 @@ Welcome to your new app.
 <button @onclick="DeleteAccount">Delete Account</button>
 
 <p>Latitude - Degrees Minutes Seconds</p>
-<input @bind="_latitude[0]"/>
-<input @bind="_latitude[1]"/>
-<input @bind="_latitude[2]"/>
+<input @bind="_latD"/>
+<input @bind="_latM"/>
+<input @bind="_latS"/>
 <p>Longitude - Degrees Minutes Seconds</p>
-<input @bind="_longitude[0]"/>
-<input @bind="_longitude[1]"/>
-<input @bind="_longitude[2]"/>
+<input @bind="_lonD"/>
+<input @bind="_lonM"/>
+<input @bind="_lonS"/>
 
 <button @onclick="GetAllLoc">Get all locations</button>
 
 @code {
     
     private String[] _input = new String[12];
-    private String[] _latitude = new String[3];
-    private String[] _longitude = new String[3];
+    private String _latD, _latM, _latS;
+    private String _lonD, _lonM, _lonS;
 
     private async void NewAccount()
     {
@@ -59,14 +59,19 @@ Welcome to your new app.
     
     private async void SendLoc()
     {
-        var location = new NewLocation
-        {
-            Lat = $"{_latitude[0]}-{_latitude[1]}-{_latitude[2]}",
-            Lon = $"{_longitude[0]}-{_longitude[1]}-{_longitude[2]}",
-            T = DateTime.UtcNow,
-            Key = _input
-        };
+        var location = new NewLocation();
+        location.Key = _input;
+        if (D(_latD) < 0d) location.Latitude = D(_latD) - D(_latM) / 60 - D(_latS) / 3600;
+        else location.Latitude = D(_latD) + D(_latM) / 60 + D(_latS) / 3600;
+        if (D(_lonD) < 0d) location.Longitude = D(_lonD) - D(_lonM) / 60 - D(_lonS) / 3600;
+        else location.Longitude = D(_lonD) + D(_lonM) / 60 + D(_lonS) / 3600;
+        location.Name = DateTime.UtcNow;
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/New", location);
+    }
+
+    private static Double D(String str) // Convert to double, for code cleanliness (typing Double.Parse every time will get messy)
+    {
+        return Double.Parse(str);
     }
 
     private async void GetAllLoc()

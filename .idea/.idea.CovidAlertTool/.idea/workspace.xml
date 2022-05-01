@@ -8,15 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Client/wwwroot/OpenLayers.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/0562dcda-0bdd-445e-8d83-334ebdb427b9.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/0562dcda-0bdd-445e-8d83-334ebdb427b9.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Pages/Index.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Index.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/wwwroot/OpenLayers.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/wwwroot/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shared/Location.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Shared/Location.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +135,7 @@
       <option name="presentableId" value="Default" />
       <updated>1651303886875</updated>
       <workItem from="1651303892542" duration="4603000" />
-      <workItem from="1651334014375" duration="16299000" />
+      <workItem from="1651334014375" duration="28067000" />
     </task>
     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
       <created>1651308451623</created>

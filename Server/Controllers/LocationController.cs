@@ -29,12 +29,12 @@ public class LocationController : ControllerBase
             return Unauthorized();
         }
 
-        var query = $"INSERT INTO {hash} (Lat, Lon, T) VALUES (@Lat, @Lon, @T)";
+        var query = $"INSERT INTO {hash} (Latitude, Longitude, Name) VALUES (@Latitude, @Longitude, @Name)";
         await access.Execute(query, new
         {
-            Lat = location.Lat,
-            Lon = location.Lon,
-            T = location.T
+            Latitude = location.Latitude,
+            Longitude = location.Longitude,
+            Name = location.Name
         }, Utils.UsersDatabaseConnectionString);
 
         return Ok(query);

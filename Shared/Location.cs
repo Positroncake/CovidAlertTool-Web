@@ -2,7 +2,7 @@ namespace CovidAlertTool.Shared;
 
 public class Location
 {
-    public String Lat { get; set; } = String.Empty;
-    public String Lon { get; set; } = String.Empty;
-    public DateTime T { get; set; }
+    public Double Latitude { get; set; }
+    public Double Longitude { get; set; }
+    public DateTime Name { get; set; }
 }

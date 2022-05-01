@@ -1,13 +1,64 @@
 @page "/Map"
-@inject IJSRuntime JsRuntime
+@using Syncfusion.Blazor.Maps
+@using CovidAlertTool.Shared
+@using System.Net
+@inject HttpClient HttpClient
 
-<div id="mapdiv"></div>
+@if (_locations is not null)
+{
+    <SfMaps Width="100%" Height="700">
+        <MapsZoomSettings Enable="true" MaxZoom="19" ZoomFactor="2">
+            <MapsZoomToolbarSettings>
+                <MapsZoomToolbarButton ToolbarItems="new List<ToolbarItem>() { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }"></MapsZoomToolbarButton>
+            </MapsZoomToolbarSettings>
+        </MapsZoomSettings>
+        <MapsCenterPosition Latitude="29.394708" Longitude="-94.954653"></MapsCenterPosition>
+        <MapsLayers>
+            <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
+                <MapsMarkerSettings>
+                    <MapsMarker Visible="true" DataSource="_locations" Shape="MarkerType.Triangle" Height="15" Fill="black" Width="15" TValue="Location">
+                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
+                    </MapsMarker>
+                </MapsMarkerSettings>
+                <MapsNavigationLines>
+                    @for (var i = 0; i < _locations.Count - 1; ++i)
+                    {
+                        <MapsNavigationLine Visible="true" Width="13" Color="#0066cc" Angle="0"
+                                            Latitude="new[] { _locations.ElementAt(i).Latitude, _locations.ElementAt(i + 1).Latitude }"
+                                            Longitude="new[] { _locations.ElementAt(i).Longitude, _locations.ElementAt(i + 1).Longitude }"></MapsNavigationLine>
+                    }
+                </MapsNavigationLines>
+            </MapsLayer>
+        </MapsLayers>
+    </SfMaps>
+}
 
-@code {
+<input @bind="_input[0]"/>
+<input @bind="_input[1]"/>
+<input @bind="_input[2]"/>
+<input @bind="_input[3]"/>
+<input @bind="_input[4]"/>
+<input @bind="_input[5]"/>
+<input @bind="_input[6]"/>
+<input @bind="_input[7]"/>
+<input @bind="_input[8]"/>
+<input @bind="_input[9]"/>
+<input @bind="_input[10]"/>
+<input @bind="_input[11]"/>
 
-    protected override async void OnAfterRender(Boolean firstRender)
+<button @onclick="Load">Load</button>
+
+@code{
+
+    private List<Location>? _locations;
+    private readonly String[] _input = new String[12];
+
+    private async void Load()
     {
-        await JsRuntime.InvokeVoidAsync("drawMap");
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+        _locations = await response.Content.ReadFromJsonAsync<List<Location>>();
+        StateHasChanged();
     }
 
 }
