@@ -5,6 +5,7 @@ namespace CovidAlertTool.Server;
 
 public class Utils
 {
+    public const String LocationsDatabaseConnectionString = "Server=127.0.0.1;Port=3306;Database=covid_alert_tool_locations;Uid=callocations;Pwd=TvFJb2wc7WM4qmSdXDiL5t9PvwUPddYq";
     public const String UsersDatabaseConnectionString = "Server=127.0.0.1;Port=3306;Database=covid_alert_tool_users;Uid=calusers;Pwd=bZvHeMxzU9faAHhS2ukhV7Ed5uzPErUs";
 
     public static String HashWords(IEnumerable<String> words)

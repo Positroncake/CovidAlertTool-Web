@@ -32,9 +32,9 @@ public class LocationController : ControllerBase
         var query = $"INSERT INTO {hash} (Latitude, Longitude, Name) VALUES (@Latitude, @Longitude, @Name)";
         await access.Execute(query, new
         {
-            Latitude = location.Latitude,
-            Longitude = location.Longitude,
-            Name = location.Name
+            location.Latitude,
+            location.Longitude,
+            location.Name
         }, Utils.UsersDatabaseConnectionString);
 
         return Ok(query);
@@ -61,5 +61,21 @@ public class LocationController : ControllerBase
         }
 
         return Ok(locations);
+    }
+
+    [HttpPost]
+    [Route("ReportCase")]
+    public async Task<ActionResult> ReportCase(Location location)
+    {
+        IAccess access = new Access();
+        const String query = "INSERT INTO user_reports (Latitude, Longitude, Name) VALUES (@Latitude, @Longitude, @Name)";
+        await access.Execute(query, new
+        {
+            location.Latitude,
+            location.Longitude,
+            location.Name
+        }, Utils.LocationsDatabaseConnectionString);
+
+        return Ok(query);
     }
 }

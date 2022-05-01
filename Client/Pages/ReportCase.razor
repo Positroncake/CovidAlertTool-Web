@@ -1,0 +1,43 @@
+@page "/Report"
+@using System.Net
+@using CovidAlertTool.Shared
+@inject HttpClient HttpClient
+@inject IGeolocationService GeolocationService
+<h3>Report A Case</h3>
+
+<button @onclick="ReportAtGpsPos">Report a case at my current GPS position</button>
+
+@code {
+
+    GeolocationPosition _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
+
+    protected override void OnInitialized()
+    {
+        GeolocationService.GetCurrentPosition(this, nameof(OnPositionReceived));
+    }
+
+    private async void ReportAtGpsPos()
+    {
+        var location = new Location
+        {
+            Latitude = _position.Coords.Latitude,
+            Longitude = _position.Coords.Longitude,
+            Name = DateTime.UtcNow
+        };
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
+        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/ReportCase", location);
+    }
+
+    [JSInvokable]
+    public void OnPositionReceived(GeolocationPosition position)
+    {
+        _position = position;
+    }
+
+    [JSInvokable]
+    public void OnPositionError(GeolocationPositionError positionError)
+    {
+        _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };
+    }
+
+}

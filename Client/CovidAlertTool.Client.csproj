@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.Geolocation.WebAssembly" Version="2.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0-preview.2.22153.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0-preview.2.22153.2" PrivateAssets="all" />
     <PackageReference Include="Syncfusion.Blazor.Maps" Version="20.1.0.51" />
