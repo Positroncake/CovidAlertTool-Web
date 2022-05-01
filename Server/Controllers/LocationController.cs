@@ -81,7 +81,7 @@ public class LocationController : ControllerBase
 
     [HttpGet]
     [Route("GetReports")]
-    public async Task<ActionResult> GetReports(Location location)
+    public async Task<ActionResult> GetReports()
     {
         IAccess access = new Access();
         const String query = "SELECT * FROM user_reports";

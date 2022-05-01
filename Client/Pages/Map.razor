@@ -16,7 +16,10 @@
         <MapsLayers>
             <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
                 <MapsMarkerSettings>
-                    <MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Triangle" Height="15" Fill="black" Width="15" TValue="Location">
+                    <MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Diamond" Height="15" Fill="#000000" Width="15" TValue="Location">
+                        <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
+                    </MapsMarker>
+                    <MapsMarker Visible="true" DataSource="_reports" Shape="MarkerType.Triangle" Height="15" Fill="orange" Width="15" TValue="Location">
                         <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
                     </MapsMarker>
                 </MapsMarkerSettings>
@@ -57,7 +60,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await HttpClient
+        HttpResponseMessage response = await HttpClient.GetAsync("LocationApi/GetReports");
+        _reports = await response.Content.ReadFromJsonAsync<List<Location>>();
     }
 
     private async void LoadJourney()
