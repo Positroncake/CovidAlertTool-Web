@@ -78,4 +78,15 @@ public class LocationController : ControllerBase
 
         return Ok(query);
     }
+
+    [HttpGet]
+    [Route("GetReports")]
+    public async Task<ActionResult> GetReports(Location location)
+    {
+        IAccess access = new Access();
+        const String query = "SELECT * FROM user_reports";
+        List<Location> locations =
+            await access.Query<Location, dynamic>(query, new { }, Utils.LocationsDatabaseConnectionString);
+        return Ok(locations);
+    }
 }

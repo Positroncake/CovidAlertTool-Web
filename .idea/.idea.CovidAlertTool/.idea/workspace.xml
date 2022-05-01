@@ -7,19 +7,7 @@
     <projectFile profileName="IIS Express">Client/CovidAlertTool.Client.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="File transfer to HKgame">
-      <change afterPath="$PROJECT_DIR$/Client/Pages/ReportCase.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/wwwroot/OpenLayers.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/wwwroot/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" afterDir="false" />
-    </list>
+    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="File transfer to HKgame" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -136,7 +124,7 @@
       <option name="presentableId" value="Default" />
       <updated>1651303886875</updated>
       <workItem from="1651303892542" duration="4603000" />
-      <workItem from="1651334014375" duration="36952000" />
+      <workItem from="1651334014375" duration="37499000" />
     </task>
     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
       <created>1651308451623</created>

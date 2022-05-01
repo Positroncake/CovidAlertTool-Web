@@ -4,7 +4,7 @@
 @using System.Net
 @inject HttpClient HttpClient
 
-@if (_locations is not null)
+@if (_waypoints is not null)
 {
     <SfMaps Width="100%" Height="700">
         <MapsZoomSettings Enable="true" MaxZoom="19" ZoomFactor="2">
@@ -16,16 +16,16 @@
         <MapsLayers>
             <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="String">
                 <MapsMarkerSettings>
-                    <MapsMarker Visible="true" DataSource="_locations" Shape="MarkerType.Triangle" Height="15" Fill="black" Width="15" TValue="Location">
+                    <MapsMarker Visible="true" DataSource="_waypoints" Shape="MarkerType.Triangle" Height="15" Fill="black" Width="15" TValue="Location">
                         <MapsMarkerTooltipSettings ValuePath="Name" Visible="true"></MapsMarkerTooltipSettings>
                     </MapsMarker>
                 </MapsMarkerSettings>
                 <MapsNavigationLines>
-                    @for (var i = 0; i < _locations.Count - 1; ++i)
+                    @for (var i = 0; i < _waypoints.Count - 1; ++i)
                     {
                         <MapsNavigationLine Visible="true" Width="13" Color="#0066cc" Angle="0"
-                                            Latitude="new[] { _locations.ElementAt(i).Latitude, _locations.ElementAt(i + 1).Latitude }"
-                                            Longitude="new[] { _locations.ElementAt(i).Longitude, _locations.ElementAt(i + 1).Longitude }">
+                                            Latitude="new[] { _waypoints.ElementAt(i).Latitude, _waypoints.ElementAt(i + 1).Latitude }"
+                                            Longitude="new[] { _waypoints.ElementAt(i).Longitude, _waypoints.ElementAt(i + 1).Longitude }">
                         </MapsNavigationLine>
                     }
                 </MapsNavigationLines>
@@ -47,18 +47,24 @@
 <input @bind="_input[10]"/>
 <input @bind="_input[11]"/>
 
-<button @onclick="Load">Load</button>
+<button @onclick="LoadJourney">Load my journey</button>
 
 @code{
 
-    private List<Location>? _locations;
+    private List<Location>? _waypoints;
+    private List<Location>? _reports;
     private readonly String[] _input = new String[12];
 
-    private async void Load()
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient
+    }
+
+    private async void LoadJourney()
     {
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
         while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
-        _locations = await response.Content.ReadFromJsonAsync<List<Location>>();
+        _waypoints = await response.Content.ReadFromJsonAsync<List<Location>>();
         StateHasChanged();
     }
 
