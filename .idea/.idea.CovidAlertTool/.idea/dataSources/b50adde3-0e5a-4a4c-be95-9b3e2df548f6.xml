@@ -1,31 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="covid_alert_tool_locations@localhost">
   <database-model serializer="dbm" dbms="MARIADB" family-id="MARIADB" format-version="4.38">
-    <root id="1">
-      <DefaultCasing>exact</DefaultCasing>
-      <DefaultEngine>InnoDB</DefaultEngine>
-      <Grants>covid_alert_tool_locations|schema||callocations|localhost|ALTER|G
-covid_alert_tool_locations|schema||callocations|localhost|ALTER ROUTINE|G
-covid_alert_tool_locations|schema||callocations|localhost|CREATE|G
-covid_alert_tool_locations|schema||callocations|localhost|CREATE ROUTINE|G
-covid_alert_tool_locations|schema||callocations|localhost|CREATE TEMPORARY TABLES|G
-covid_alert_tool_locations|schema||callocations|localhost|CREATE VIEW|G
-covid_alert_tool_locations|schema||callocations|localhost|DELETE|G
-covid_alert_tool_locations|schema||callocations|localhost|DELETE HISTORY|G
-covid_alert_tool_locations|schema||callocations|localhost|DROP|G
-covid_alert_tool_locations|schema||callocations|localhost|EVENT|G
-covid_alert_tool_locations|schema||callocations|localhost|EXECUTE|G
-covid_alert_tool_locations|schema||callocations|localhost|INDEX|G
-covid_alert_tool_locations|schema||callocations|localhost|INSERT|G
-covid_alert_tool_locations|schema||callocations|localhost|LOCK TABLES|G
-covid_alert_tool_locations|schema||callocations|localhost|REFERENCES|G
-covid_alert_tool_locations|schema||callocations|localhost|SELECT|G
-covid_alert_tool_locations|schema||callocations|localhost|SHOW VIEW|G
-covid_alert_tool_locations|schema||callocations|localhost|TRIGGER|G
-covid_alert_tool_locations|schema||callocations|localhost|UPDATE|G
-covid_alert_tool_locations|schema||callocations|localhost|grant option|G</Grants>
-      <ServerVersion>10.7.3</ServerVersion>
-    </root>
+    <root id="1"/>
     <collation id="2" parent="1" name="big5_chinese_ci">
       <Charset>big5</Charset>
       <DefaultForCharset>1</DefaultForCharset>

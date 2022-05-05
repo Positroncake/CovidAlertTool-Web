@@ -1,0 +1,415 @@
+Index: Client/Pages/Map.razor
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@page \"/Map\"\n@using Syncfusion.Blazor.Maps\n@using CovidAlertTool.Shared\n@using System.Net\n@using Blazored.LocalStorage\n@inject HttpClient HttpClient\n@inject ILocalStorageService LocalStorageService\n\n@if (_showLoading)\n{\n\t<p>Generating map, please wait...</p>\n}\n\n@if (_statistics.Count is not 0)\n{\n\t<SfMaps Width=\"1800\" Height=\"600\">\n\t\t<MapsZoomSettings Enable=\"true\" MaxZoom=\"19\" ZoomFactor=\"11\">\n\t\t\t<MapsZoomToolbarSettings>\n\t\t\t\t<MapsZoomToolbarButton ToolbarItems=\"new List<ToolbarItem> { ToolbarItem.Zoom, ToolbarItem.ZoomIn, ToolbarItem.ZoomOut, ToolbarItem.Pan, ToolbarItem.Reset }\"></MapsZoomToolbarButton>\n\t\t\t</MapsZoomToolbarSettings>\n\t\t</MapsZoomSettings>\n\t\t<MapsCenterPosition Latitude=\"_waypoints.First().Latitude\" Longitude=\"_waypoints.First().Longitude\"></MapsCenterPosition>\n\t\t<MapsLayers>\n\t\t\t<MapsLayer UrlTemplate=\"https://tile.openstreetmap.org/level/tileX/tileY.png\" TValue=\"String\">\n\t\t\t\t<MapsMarkerSettings>\n\t\t\t\t\t<MapsMarker Visible=\"true\" DataSource=\"_reports\" Shape=\"MarkerType.Triangle\" Height=\"15\" Fill=\" #f57600\" Width=\"15\" TValue=\"Location\">\n\t\t\t\t\t\t<MapsMarkerTooltipSettings ValuePath=\"Description\" Visible=\"true\"></MapsMarkerTooltipSettings>\n\t\t\t\t\t</MapsMarker>\n\t\t\t\t\t<MapsMarker Visible=\"true\" DataSource=\"_waypoints\" Shape=\"MarkerType.Diamond\" Height=\"15\" Fill=\"#000000\" Width=\"15\" TValue=\"Location\">\n\t\t\t\t\t\t<MapsMarkerTooltipSettings ValuePath=\"Description\" Visible=\"true\"></MapsMarkerTooltipSettings>\n\t\t\t\t\t</MapsMarker>\n\t\t\t\t\t<MapsMarkerClusterSettings AllowClustering=\"true\" Shape=\"MarkerType.Circle\" Height=\"30\" Fill=\"#0066cc\" Width=\"30\">\n\t\t\t\t\t\t<MapsLayerMarkerClusterLabelStyle Color=\"#ffffff\"></MapsLayerMarkerClusterLabelStyle>\n\t\t\t\t\t</MapsMarkerClusterSettings>\n\t\t\t\t\t<MapsMarker Visible=\"true\" DataSource=\"_statistics\" Shape=\"MarkerType.Rectangle\" Height=\"15\" Fill=\"#9d00d4\" Width=\"15\" TValue=\"Region\">\n\t\t\t\t\t\t<MapsMarkerTooltipSettings ValuePath=\"Description\" Visible=\"true\"></MapsMarkerTooltipSettings>\n\t\t\t\t\t</MapsMarker>\n\t\t\t\t</MapsMarkerSettings>\n\t\t\t\t<MapsNavigationLines>\n\t\t\t\t\t@for (var i = 0; i < _waypoints.Count - 1; ++i)\n\t\t\t\t\t{\n\t\t\t\t\t\t<MapsNavigationLine Visible=\"true\" Width=\"16\" Color=\"#0066cc\" Angle=\"0\"\n\t\t\t\t\t\t                    Latitude=\"new[] { _waypoints.ElementAt(i).Latitude, _waypoints.ElementAt(i + 1).Latitude }\"\n\t\t\t\t\t\t                    Longitude=\"new[] { _waypoints.ElementAt(i).Longitude, _waypoints.ElementAt(i + 1).Longitude }\">\n\t\t\t\t\t\t</MapsNavigationLine>\n\t\t\t\t\t}\n\t\t\t\t</MapsNavigationLines>\n\t\t\t</MapsLayer>\n\t\t</MapsLayers>\n\t</SfMaps>\n\t}\n\n\t@if (!_hideKeyInput)\n\t{\n\t\t<input @bind=\"_input[0]\"/>\n\t\t<input @bind=\"_input[1]\"/>\n\t\t<input @bind=\"_input[2]\"/>\n\t\t<input @bind=\"_input[3]\"/>\n\t\t<input @bind=\"_input[4]\"/>\n\t\t<input @bind=\"_input[5]\"/>\n\t\t<input @bind=\"_input[6]\"/>\n\t\t<input @bind=\"_input[7]\"/>\n\t\t<input @bind=\"_input[8]\"/>\n\t\t<input @bind=\"_input[9]\"/>\n\t\t<input @bind=\"_input[10]\"/>\n\t\t<input @bind=\"_input[11]\"/>\n\t}\n\n\t<button @onclick=\"LoadJourney\">Load my journey</button>\n\n\t@code{\n\n\t\tprivate Boolean _hideKeyInput = true;\n\t\tprivate Boolean _showLoading = false;\n\n\t\tprivate class Region\n\t\t{\n\t\t\tpublic Double Latitude { get; set; }\n\t\t\tpublic Double Longitude { get; set; }\n\t\t\tpublic String Description { get; set; } = String.Empty;\n\t\t}\n\n\t\tprivate List<Region> _waypoints = new();\n\t\tprivate List<Location> _wpt = new();\n\t\tprivate List<Region> _reports = new();\n\t\tprivate List<Location> _rpt = new();\n\t\tprivate List<Region> _statistics = new();\n\t\tprivate List<RegionalCovidData> _stats = new();\n\t\tprivate String[] _input = new String[12];\n\n\t\tprivate async void LoadJourney()\n\t\t{\n\t\t\tif (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")) && _hideKeyInput) // If user is not logged in, prompt login\n\t\t\t{\n\t\t\t\t_hideKeyInput = false;\n\t\t\t\tStateHasChanged();\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\t_showLoading = true;\n\t\t\tStateHasChanged();\n\n\t\t\tif (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync(\"key\")).Split(\",\");\n\t\t\tHttpResponseMessage response = await HttpClient.PostAsJsonAsync(\"LocationApi/Get\", _input);\n\t\t\twhile (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync(\"LocationApi/Get\", _input);\n\t\t\t_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();\n\t\t\tforeach (Location location in _wpt)\n\t\t\t{\n\t\t\t\t_waypoints.Add(new Region\n\t\t\t\t{\n\t\t\t\t\tLatitude = location.Latitude,\n\t\t\t\t\tLongitude = location.Longitude,\n\t\t\t\t\tDescription = $\"{location.Name}   \"\n\t\t\t\t});\n\t\t\t}\n\n\t\t\tresponse = await HttpClient.GetAsync(\"LocationApi/GetReports\");\n\t\t\t_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();\n\t\t\tforeach (Location location in _rpt)\n\t\t\t{\n\t\t\t\t_reports.Add(new Region\n\t\t\t\t{\n\t\t\t\t\tLatitude = location.Latitude,\n\t\t\t\t\tLongitude = location.Longitude,\n\t\t\t\t\tDescription = $\"{location.Name}   \"\n\t\t\t\t});\n\t\t\t}\n\n\t\t\tresponse = await HttpClient.GetAsync(\"LocationApi/GetStats\");\n\t\t\t_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();\n\t\t\tforeach (RegionalCovidData statistic in _stats)\n\t\t\t{\n\t\t\t\t_statistics.Add(new Region\n\t\t\t\t{\n\t\t\t\t\tLatitude = statistic.Latitude,\n\t\t\t\t\tLongitude = statistic.Longitude,\n\t\t\t\t\tDescription = $\"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString(\"0.###\")}% death rate as of {statistic.Updated}      \"\n\t\t\t\t});\n\t\t\t}\n\t\t\tStateHasChanged();\n\n\t\t\tif (!response.IsSuccessStatusCode) return;\n\t\t\tif (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")))\n\t\t\t\tawait LocalStorageService.SetItemAsStringAsync(\"key\", String.Join(\",\", _input));\n\n\t\t\t_showLoading = false;\n\t\t\tStateHasChanged();\n\t\t}\n\n\t}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Client/Pages/Map.razor b/Client/Pages/Map.razor
+--- a/Client/Pages/Map.razor	(revision 5a78dd9affb2e6457f527faabbd06869d071fa41)
++++ b/Client/Pages/Map.razor	(date 1651404770181)
+@@ -48,103 +48,180 @@
+ 			</MapsLayer>
+ 		</MapsLayers>
+ 	</SfMaps>
+-	}
++}
+ 
+-	@if (!_hideKeyInput)
+-	{
+-		<input @bind="_input[0]"/>
+-		<input @bind="_input[1]"/>
+-		<input @bind="_input[2]"/>
+-		<input @bind="_input[3]"/>
+-		<input @bind="_input[4]"/>
+-		<input @bind="_input[5]"/>
+-		<input @bind="_input[6]"/>
+-		<input @bind="_input[7]"/>
+-		<input @bind="_input[8]"/>
+-		<input @bind="_input[9]"/>
+-		<input @bind="_input[10]"/>
+-		<input @bind="_input[11]"/>
+-	}
++@if (!_hideKeyInput)
++{
++	<div class="grid-container">
++		<div class="grid-item">
++			1
++			<span>
++				<input @bind="_input[0]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			2
++			<span>
++				<input @bind="_input[1]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			3
++			<span>
++				<input @bind="_input[2]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			4
++			<span>
++				<input @bind="_input[3]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			5
++			<span>
++				<input @bind="_input[4]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			6
++			<span>
++				<input @bind="_input[5]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			7
++			<span>
++				<input @bind="_input[6]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			8
++			<span>
++				<input @bind="_input[7]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			9
++			<span>
++				<input @bind="_input[8]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			10
++			<span>
++				<input @bind="_input[9]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			11
++			<span>
++				<input @bind="_input[10]"/>
++			</span>
++		</div>
++		<div class="grid-item">
++			12
++			<span>
++				<input @bind="_input[11]"/>
++			</span>
++		</div>
++	</div>
++}
+ 
+-	<button @onclick="LoadJourney">Load my journey</button>
++<button @onclick="LoadJourney">Load my journey</button>
+ 
+-	@code{
++<button @onclick="DeleteAccount">Wipe all my data</button>
++
++@code{
+ 
+-		private Boolean _hideKeyInput = true;
+-		private Boolean _showLoading = false;
++	private Boolean _hideKeyInput = true;
++	private Boolean _showLoading;
+ 
+-		private class Region
+-		{
+-			public Double Latitude { get; set; }
+-			public Double Longitude { get; set; }
+-			public String Description { get; set; } = String.Empty;
+-		}
++	private class Region
++	{
++		public Double Latitude { get; set; }
++		public Double Longitude { get; set; }
++		public String Description { get; set; } = String.Empty;
++	}
+ 
+-		private List<Region> _waypoints = new();
+-		private List<Location> _wpt = new();
+-		private List<Region> _reports = new();
+-		private List<Location> _rpt = new();
+-		private List<Region> _statistics = new();
+-		private List<RegionalCovidData> _stats = new();
+-		private String[] _input = new String[12];
++	private List<Region> _waypoints = new();
++	private List<Location> _wpt = new();
++	private List<Region> _reports = new();
++	private List<Location> _rpt = new();
++	private List<Region> _statistics = new();
++	private List<RegionalCovidData> _stats = new();
++	private String[] _input = new String[12];
+ 
+-		private async void LoadJourney()
+-		{
+-			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
+-			{
+-				_hideKeyInput = false;
+-				StateHasChanged();
+-				return;
+-			}
++	private async void LoadJourney()
++	{
++		if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")) && _hideKeyInput) // If user is not logged in, prompt login
++		{
++			_hideKeyInput = false;
++			StateHasChanged();
++			return;
++		}
+ 
+-			_showLoading = true;
+-			StateHasChanged();
++		_showLoading = true;
++		StateHasChanged();
+ 
+-			if (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync("key")).Split(",");
+-			HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+-			while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
+-			_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+-			foreach (Location location in _wpt)
+-			{
+-				_waypoints.Add(new Region
+-				{
+-					Latitude = location.Latitude,
+-					Longitude = location.Longitude,
+-					Description = $"{location.Name}   "
+-				});
+-			}
++		if (_hideKeyInput) _input = (await LocalStorageService.GetItemAsStringAsync("key")).Split(",");
++		HttpResponseMessage response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
++		while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync("LocationApi/Get", _input);
++		_wpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
++		foreach (Location location in _wpt)
++		{
++			_waypoints.Add(new Region
++			{
++				Latitude = location.Latitude,
++				Longitude = location.Longitude,
++				Description = $"{location.Name}   "
++			});
++		}
+ 
+-			response = await HttpClient.GetAsync("LocationApi/GetReports");
+-			_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
+-			foreach (Location location in _rpt)
+-			{
+-				_reports.Add(new Region
+-				{
+-					Latitude = location.Latitude,
+-					Longitude = location.Longitude,
+-					Description = $"{location.Name}   "
+-				});
+-			}
++		response = await HttpClient.GetAsync("LocationApi/GetReports");
++		_rpt = await response.Content.ReadFromJsonAsync<List<Location>>() ?? new List<Location>();
++		foreach (Location location in _rpt)
++		{
++			_reports.Add(new Region
++			{
++				Latitude = location.Latitude,
++				Longitude = location.Longitude,
++				Description = $"{location.Name}   "
++			});
++		}
+ 
+-			response = await HttpClient.GetAsync("LocationApi/GetStats");
+-			_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();
+-			foreach (RegionalCovidData statistic in _stats)
+-			{
+-				_statistics.Add(new Region
+-				{
+-					Latitude = statistic.Latitude,
+-					Longitude = statistic.Longitude,
+-					Description = $"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString("0.###")}% death rate as of {statistic.Updated}      "
+-				});
+-			}
+-			StateHasChanged();
++		response = await HttpClient.GetAsync("LocationApi/GetStats");
++		_stats = await response.Content.ReadFromJsonAsync<List<RegionalCovidData>>() ?? new List<RegionalCovidData>();
++		foreach (RegionalCovidData statistic in _stats)
++		{
++			_statistics.Add(new Region
++			{
++				Latitude = statistic.Latitude,
++				Longitude = statistic.Longitude,
++				Description = $"{statistic.Confirmed} cases, {statistic.Deaths} deaths, and a {statistic.Rate.ToString("0.###")}% death rate as of {statistic.Updated}      "
++			});
++		}
++		StateHasChanged();
+ 
+-			if (!response.IsSuccessStatusCode) return;
+-			if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
+-				await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
++		if (!response.IsSuccessStatusCode) return;
++		if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key")))
++			await LocalStorageService.SetItemAsStringAsync("key", String.Join(",", _input));
+ 
+-			_showLoading = false;
+-			StateHasChanged();
+-		}
++		_showLoading = false;
++		StateHasChanged();
++	}
++
++	private async void DeleteAccount()
++	{
++		if (_hideKeyInput)
++		{
++			_hideKeyInput = false;
++			return;
++		}
++		await HttpClient.PostAsJsonAsync("UserApi/Delete", _input);
++		if (!String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync("key"))) await LocalStorageService.RemoveItemAsync("key");
++		_hideKeyInput = true;
++		StateHasChanged();
++	}
+ 
+-	}
+\ No newline at end of file
++}
+\ No newline at end of file
+Index: .idea/.idea.CovidAlertTool/.idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoGeneratedRunConfigurationManager\">\n    <projectFile profileName=\"CovidAlertTool.Server\">Server/CovidAlertTool.Server.csproj</projectFile>\n    <projectFile profileName=\"IIS Express\">Server/CovidAlertTool.Server.csproj</projectFile>\n    <projectFile profileName=\"CovidAlertTool\">Client/CovidAlertTool.Client.csproj</projectFile>\n    <projectFile profileName=\"IIS Express\">Client/CovidAlertTool.Client.csproj</projectFile>\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"dd1cd8aa-2483-49a3-ab64-480003a5e835\" name=\"Changes\" comment=\"Added covid reporting functionality\">\n      <change afterPath=\"$PROJECT_DIR$/Client/Pages/Journey.razor\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/Client/Pages/Launch.razor\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/Client/Shared/TopNavbar.razor\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Pages/Index.razor\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/Pages/Index.razor\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Pages/Map.razor\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/Pages/Map.razor\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Pages/ReportCase.razor\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/Pages/ReportCase.razor\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Program.cs\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/Program.cs\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Shared/MainLayout.razor\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/Shared/MainLayout.razor\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Shared/NavMenu.razor\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/Shared/NavMenu.razor.css\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Client/wwwroot/css/app.css\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Client/wwwroot/css/app.css\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Server/Controllers/LocationController.cs\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Server/Controllers/LocationController.cs\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Server/Program.cs\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Server/Program.cs\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/Shared/RegionalCovidData.cs\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Shared/RegionalCovidData.cs\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"JavaScript File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"HighlightingSettingsPerFile\">\n    <setting file=\"file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b37bdcda3df384671c8eed0dd528e74eff6e04eeb7b1e81f219e5e066318/ComponentBase.cs\" root0=\"SKIP_HIGHLIGHTING\" />\n    <setting file=\"file://$PROJECT_DIR$/Client/Pages/Index.razor\" root0=\"FORCE_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"mock:///home/roncake/RiderProjects/CovidAlertTool-Web/Client/Pages/Map.razor\" root0=\"SKIP_HIGHLIGHTING\" root1=\"FORCE_HIGHLIGHTING\" root2=\"FORCE_HIGHLIGHTING\" />\n    <setting file=\"file://$PROJECT_DIR$/Server/Controllers/UserController.cs\" root0=\"FORCE_HIGHLIGHTING\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"28VZnt4CDYZkrE82DfRA4nZ9K7c\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"ASKED_ADD_EXTERNAL_FILES\": \"true\",\n    \"ASKED_SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\n    \"WebServerToolWindowFactoryState\": \"false\",\n    \"last_opened_file_path\": \"/home/roncake/Desktop/04-30-2022.csv\",\n    \"settings.editor.selected.configurable\": \"preferences.sourceCode.C#\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  },\n  \"keyToStringList\": {\n    \"DatabaseDriversLRU\": [\n      \"mariadb\"\n    ]\n  }\n}]]></component>\n  <component name=\"RunManager\" selected=\".NET Launch Settings Profile.CovidAlertTool.Server\">\n    <configuration name=\"CovidAlertTool.Client: CovidAlertTool\" type=\"LaunchSettings\" factoryName=\".NET Launch Settings Profile\">\n      <option name=\"LAUNCH_PROFILE_PROJECT_FILE_PATH\" value=\"$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj\" />\n      <option name=\"LAUNCH_PROFILE_TFM\" value=\"net7.0\" />\n      <option name=\"LAUNCH_PROFILE_NAME\" value=\"CovidAlertTool\" />\n      <option name=\"USE_EXTERNAL_CONSOLE\" value=\"0\" />\n      <option name=\"USE_MONO\" value=\"0\" />\n      <option name=\"RUNTIME_ARGUMENTS\" value=\"\" />\n      <option name=\"GENERATE_APPLICATIONHOST_CONFIG\" value=\"1\" />\n      <option name=\"SHOW_IIS_EXPRESS_OUTPUT\" value=\"0\" />\n      <option name=\"SEND_DEBUG_REQUEST\" value=\"1\" />\n      <option name=\"ADDITIONAL_IIS_EXPRESS_ARGUMENTS\" value=\"\" />\n      <method v=\"2\">\n        <option name=\"Build\" />\n      </method>\n    </configuration>\n    <configuration name=\"CovidAlertTool.Client: IIS Express\" type=\"LaunchSettings\" factoryName=\".NET Launch Settings Profile\">\n      <option name=\"LAUNCH_PROFILE_PROJECT_FILE_PATH\" value=\"$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj\" />\n      <option name=\"LAUNCH_PROFILE_TFM\" value=\"net7.0\" />\n      <option name=\"LAUNCH_PROFILE_NAME\" value=\"IIS Express\" />\n      <option name=\"USE_EXTERNAL_CONSOLE\" value=\"0\" />\n      <option name=\"USE_MONO\" value=\"0\" />\n      <option name=\"RUNTIME_ARGUMENTS\" value=\"\" />\n      <option name=\"GENERATE_APPLICATIONHOST_CONFIG\" value=\"1\" />\n      <option name=\"SHOW_IIS_EXPRESS_OUTPUT\" value=\"0\" />\n      <option name=\"SEND_DEBUG_REQUEST\" value=\"1\" />\n      <option name=\"ADDITIONAL_IIS_EXPRESS_ARGUMENTS\" value=\"\" />\n      <method v=\"2\">\n        <option name=\"Build\" />\n      </method>\n    </configuration>\n    <configuration name=\"CovidAlertTool.Server\" type=\"LaunchSettings\" factoryName=\".NET Launch Settings Profile\">\n      <option name=\"LAUNCH_PROFILE_PROJECT_FILE_PATH\" value=\"$PROJECT_DIR$/Server/CovidAlertTool.Server.csproj\" />\n      <option name=\"LAUNCH_PROFILE_TFM\" value=\"net7.0\" />\n      <option name=\"LAUNCH_PROFILE_NAME\" value=\"CovidAlertTool.Server\" />\n      <option name=\"USE_EXTERNAL_CONSOLE\" value=\"0\" />\n      <option name=\"USE_MONO\" value=\"0\" />\n      <option name=\"RUNTIME_ARGUMENTS\" value=\"\" />\n      <option name=\"GENERATE_APPLICATIONHOST_CONFIG\" value=\"1\" />\n      <option name=\"SHOW_IIS_EXPRESS_OUTPUT\" value=\"0\" />\n      <option name=\"SEND_DEBUG_REQUEST\" value=\"1\" />\n      <option name=\"ADDITIONAL_IIS_EXPRESS_ARGUMENTS\" value=\"\" />\n      <method v=\"2\">\n        <option name=\"Build\" />\n      </method>\n    </configuration>\n    <configuration name=\"CovidAlertTool.Server: IIS Express\" type=\"LaunchSettings\" factoryName=\".NET Launch Settings Profile\">\n      <option name=\"LAUNCH_PROFILE_PROJECT_FILE_PATH\" value=\"$PROJECT_DIR$/Server/CovidAlertTool.Server.csproj\" />\n      <option name=\"LAUNCH_PROFILE_TFM\" value=\"net7.0\" />\n      <option name=\"LAUNCH_PROFILE_NAME\" value=\"IIS Express\" />\n      <option name=\"USE_EXTERNAL_CONSOLE\" value=\"0\" />\n      <option name=\"USE_MONO\" value=\"0\" />\n      <option name=\"RUNTIME_ARGUMENTS\" value=\"\" />\n      <option name=\"GENERATE_APPLICATIONHOST_CONFIG\" value=\"1\" />\n      <option name=\"SHOW_IIS_EXPRESS_OUTPUT\" value=\"0\" />\n      <option name=\"SEND_DEBUG_REQUEST\" value=\"1\" />\n      <option name=\"ADDITIONAL_IIS_EXPRESS_ARGUMENTS\" value=\"\" />\n      <method v=\"2\">\n        <option name=\"Build\" />\n      </method>\n    </configuration>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"dd1cd8aa-2483-49a3-ab64-480003a5e835\" name=\"Changes\" comment=\"\" />\n      <created>1651303886875</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1651303886875</updated>\n      <workItem from=\"1651303892542\" duration=\"4603000\" />\n      <workItem from=\"1651334014375\" duration=\"60503000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Added account creation and deletion system, login coming soon\">\n      <created>1651308451623</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1651308451623</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"File transfer to HKgame\">\n      <created>1651367631112</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1651367631112</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"Added covid reporting functionality\">\n      <created>1651386158977</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1651386158977</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"4\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"UnityCheckinConfiguration\" checkUnsavedScenes=\"true\" />\n  <component name=\"UnityUnitTestConfiguration\" currentTestLauncher=\"NUnit\" />\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <option name=\"ADD_EXTERNAL_FILES_SILENTLY\" value=\"true\" />\n    <option name=\"CLEAR_INITIAL_COMMIT_MESSAGE\" value=\"true\" />\n    <MESSAGE value=\"Added account creation and deletion system, login coming soon\" />\n    <MESSAGE value=\"File transfer to HKgame\" />\n    <MESSAGE value=\"Added covid reporting functionality\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Added covid reporting functionality\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.CovidAlertTool/.idea/workspace.xml b/.idea/.idea.CovidAlertTool/.idea/workspace.xml
+--- a/.idea/.idea.CovidAlertTool/.idea/workspace.xml	(revision 5a78dd9affb2e6457f527faabbd06869d071fa41)
++++ b/.idea/.idea.CovidAlertTool/.idea/workspace.xml	(date 1651405204940)
+@@ -7,24 +7,11 @@
+     <projectFile profileName="IIS Express">Client/CovidAlertTool.Client.csproj</projectFile>
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="Added covid reporting functionality">
+-      <change afterPath="$PROJECT_DIR$/Client/Pages/Journey.razor" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/Client/Pages/Launch.razor" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/Client/Shared/TopNavbar.razor" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/dataSources/b50adde3-0e5a-4a4c-be95-9b3e2df548f6.xml" afterDir="false" />
++    <list default="true" id="dd1cd8aa-2483-49a3-ab64-480003a5e835" name="Changes" comment="Worked on the UI">
+       <change beforePath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CovidAlertTool/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/CovidAlertTool.Client.csproj" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/Pages/Index.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Index.razor" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Client/Pages/Journey.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Journey.razor" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/Client/Pages/Map.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/Map.razor" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/Pages/ReportCase.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Pages/ReportCase.razor" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Program.cs" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/Client/Shared/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Shared/MainLayout.razor" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/Shared/NavMenu.razor.css" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Client/wwwroot/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/Client/wwwroot/css/app.css" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Controllers/LocationController.cs" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Server/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Program.cs" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Shared/RegionalCovidData.cs" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -155,7 +142,7 @@
+       <option name="presentableId" value="Default" />
+       <updated>1651303886875</updated>
+       <workItem from="1651303892542" duration="4603000" />
+-      <workItem from="1651334014375" duration="60503000" />
++      <workItem from="1651334014375" duration="62890000" />
+     </task>
+     <task id="LOCAL-00001" summary="Added account creation and deletion system, login coming soon">
+       <created>1651308451623</created>
+@@ -178,7 +165,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1651386158977</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="Worked on the UI">
++      <created>1651402181828</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1651402181828</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -203,6 +197,7 @@
+     <MESSAGE value="Added account creation and deletion system, login coming soon" />
+     <MESSAGE value="File transfer to HKgame" />
+     <MESSAGE value="Added covid reporting functionality" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Added covid reporting functionality" />
++    <MESSAGE value="Worked on the UI" />
++    <option name="LAST_COMMIT_MESSAGE" value="Worked on the UI" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: Client/Shared/MainLayout.razor
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@inherits LayoutComponentBase\n\n<header>\n    <TopNavbar></TopNavbar>\n</header>\n\n<div class=\"page\">\n    <div class=\"content px-4\">\n        @Body\n    </div>\n</div>\n\n<style>\n    body {\n        background: #212529;\n    }\n    \n    p {\n    }\n</style>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Client/Shared/MainLayout.razor b/Client/Shared/MainLayout.razor
+--- a/Client/Shared/MainLayout.razor	(revision 5a78dd9affb2e6457f527faabbd06869d071fa41)
++++ b/Client/Shared/MainLayout.razor	(date 1651402956029)
+@@ -13,8 +13,6 @@
+ <style>
+     body {
+         background: #212529;
+-    }
+-    
+-    p {
++        color: #ffffff;
+     }
+ </style>
+\ No newline at end of file
+Index: Client/Pages/Journey.razor
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@page \"/Journey\"\n@using CovidAlertTool.Shared\n@using Blazored.LocalStorage\n@using System.Net\n@inject ILocalStorageService LocalStorageService\n@inject HttpClient HttpClient\n@inject IGeolocationService GeolocationService\n<h3>My route/journey</h3>\n\n<button @onclick=\"SendGpsLoc\">Send GPS position</button>\n<br/>\n\n<p>Latitude - Degrees Minutes Seconds</p>\n<input @bind=\"_latD\"/>\n<input @bind=\"_latM\"/>\n<input @bind=\"_latS\"/>\n<p>Longitude - Degrees Minutes Seconds</p>\n<input @bind=\"_lonD\"/>\n<input @bind=\"_lonM\"/>\n<input @bind=\"_lonS\"/>\n\n@if (!_hideKeyInput)\n{\n    <input @bind=\"_input[0]\"/>\n    <input @bind=\"_input[1]\"/>\n    <input @bind=\"_input[2]\"/>\n    <input @bind=\"_input[3]\"/>\n    <input @bind=\"_input[4]\"/>\n    <input @bind=\"_input[5]\"/>\n    <input @bind=\"_input[6]\"/>\n    <input @bind=\"_input[7]\"/>\n    <input @bind=\"_input[8]\"/>\n    <input @bind=\"_input[9]\"/>\n    <input @bind=\"_input[10]\"/>\n    <input @bind=\"_input[11]\"/>\n}\n\n<button @onclick=\"SendLoc\">Send inputted coordinates</button>\n\n@code {\n\n    private String[] _input = new String[12];\n    private Boolean _hideKeyInput = true;\n    private String _latD, _latM, _latS;\n    private String _lonD, _lonM, _lonS;\n\n    GeolocationPosition _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };\n\n    protected override void OnInitialized()\n    {\n        GeolocationService.GetCurrentPosition(this, nameof(OnPositionReceived));\n    }\n\n    private async void SendGpsLoc()\n    {\n        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")) && _hideKeyInput) // If user is not logged in, prompt login\n        {\n            _hideKeyInput = false;\n            StateHasChanged();\n            return;\n        }\n\n        var location = new NewLocation();\n        location.Key = _hideKeyInput ? (await LocalStorageService.GetItemAsStringAsync(\"key\")).Split(\",\") : _input;\n        location.Latitude = _position.Coords.Latitude;\n        location.Longitude = _position.Coords.Longitude;\n        location.Name = DateTime.UtcNow;\n\n        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(\"LocationApi/New\", location);\n        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync(\"LocationApi/New\", location);\n\n    // If login is successful and key is not stored\n        if (!response.IsSuccessStatusCode) return;\n        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")))\n            await LocalStorageService.SetItemAsStringAsync(\"key\", String.Join(\",\", _input));\n    }\n\n    private async void SendLoc()\n    {\n        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")) && _hideKeyInput) // If user is not logged in, prompt login\n        {\n            _hideKeyInput = false;\n            StateHasChanged();\n            return;\n        }\n\n        var location = new NewLocation();\n        location.Key = _hideKeyInput ? (await LocalStorageService.GetItemAsStringAsync(\"key\")).Split(\",\") : _input;\n        if (D(_latD) < 0d) location.Latitude = D(_latD) - D(_latM) / 60 - D(_latS) / 3600;\n        else location.Latitude = D(_latD) + D(_latM) / 60 + D(_latS) / 3600;\n        if (D(_lonD) < 0d) location.Longitude = D(_lonD) - D(_lonM) / 60 - D(_lonS) / 3600;\n        else location.Longitude = D(_lonD) + D(_lonM) / 60 + D(_lonS) / 3600;\n        location.Name = DateTime.UtcNow;\n        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(\"LocationApi/New\", location);\n        while (response.StatusCode == HttpStatusCode.InternalServerError) response = await HttpClient.PostAsJsonAsync(\"LocationApi/New\", location);\n\n    // If login is successful and key is not stored\n        if (!response.IsSuccessStatusCode) return;\n        if (String.IsNullOrEmpty(await LocalStorageService.GetItemAsStringAsync(\"key\")))\n            await LocalStorageService.SetItemAsStringAsync(\"key\", String.Join(\",\", _input));\n    }\n\n    private static Double D(String str) // Convert to double for code cleanliness (typing Double.Parse every time will get messy)\n    {\n        return Double.Parse(str);\n    }\n\n    [JSInvokable]\n    public void OnPositionReceived(GeolocationPosition position)\n    {\n        _position = position;\n    }\n\n    [JSInvokable]\n    public void OnPositionError(GeolocationPositionError positionError)\n    {\n        _position = new GeolocationPosition { Coords = new GeolocationCoordinates { Latitude = 0d, Longitude = 0d } };\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Client/Pages/Journey.razor b/Client/Pages/Journey.razor
+--- a/Client/Pages/Journey.razor	(revision 5a78dd9affb2e6457f527faabbd06869d071fa41)
++++ b/Client/Pages/Journey.razor	(date 1651402755412)
+@@ -21,18 +21,20 @@
+ 
+ @if (!_hideKeyInput)
+ {
+-    <input @bind="_input[0]"/>
+-    <input @bind="_input[1]"/>
+-    <input @bind="_input[2]"/>
+-    <input @bind="_input[3]"/>
+-    <input @bind="_input[4]"/>
+-    <input @bind="_input[5]"/>
+-    <input @bind="_input[6]"/>
+-    <input @bind="_input[7]"/>
+-    <input @bind="_input[8]"/>
+-    <input @bind="_input[9]"/>
+-    <input @bind="_input[10]"/>
+-    <input @bind="_input[11]"/>
++    <div class="grid-container">
++        <div class="grid-item">1 <span><input @bind="_input[0]"/></span></div>
++        <div class="grid-item">2 <span><input @bind="_input[1]"/></span></div>
++        <div class="grid-item">3 <span><input @bind="_input[2]"/></span></div>
++        <div class="grid-item">4 <span><input @bind="_input[3]"/></span></div>
++        <div class="grid-item">5 <span><input @bind="_input[4]"/></span></div>
++        <div class="grid-item">6 <span><input @bind="_input[5]"/></span></div>
++        <div class="grid-item">7 <span><input @bind="_input[6]"/></span></div>
++        <div class="grid-item">8 <span><input @bind="_input[7]"/></span></div>
++        <div class="grid-item">9 <span><input @bind="_input[8]"/></span></div>
++        <div class="grid-item">10 <span><input @bind="_input[9]"/></span></div>
++        <div class="grid-item">11 <span><input @bind="_input[10]"/></span></div>
++        <div class="grid-item">12 <span><input @bind="_input[11]"/></span></div>
++    </div>
+ }
+ 
+ <button @onclick="SendLoc">Send inputted coordinates</button>
